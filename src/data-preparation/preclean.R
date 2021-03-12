@@ -1,8 +1,7 @@
 library(data.table)
 library(dplyr)
 blm2020 <- read.csv('../../data/BLM2020_Dutch_elections15.csv', stringsAsFactors = FALSE, sep = ',')
-library(data.table)
-library(dplyr)
+
 blm2021 <- read.csv('../../data/BLM2021_Dutch_elections15.csv', stringsAsFactors = FALSE, sep = ',')
 
 #View(blm2020)
