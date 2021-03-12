@@ -1,0 +1,46 @@
+What are the differences in the amount of tweets before and after the Dutch elections?
+How does the amount of tweets, including the #BLM, differentiates in different regions?
+
+
+
+# Makefile for \analysis of the BLM project
+#team_9
+
+
+#defining variables to be used
+
+
+INPUT_DIR_1 = src/BLM2020_Dutch_elections15.csv
+INPUT_DIR_2 = src/BLM2021_Dutch_elections16.csv
+OUTPUT_DIR = ../datasets/data_filtered.RData
+
+
+# Complete build: run analyze, amount of tweets, csv.
+
+
+tweets1: $(INPUT_DIR_1)/amount_of_tweets_2020.RData
+tweets2: $(INPUT_DIR_2)/amount_of_tweets_2021.RData
+merged_datasets: $(OUTPUT_DIR)/data_filtered.RData
+#region_differences: ???
+
+#analyze the amount of tweets before and after the Dutch elections
+
+$(INPUT_DIR_1)/amount_of_tweets_2020.RData: tweets1.R
+	"$(Dataprep)Rterm.exe" --vanilla --args "" < tweets1.R
+
+$(INPUT_DIR_2)/amount_of_tweets_2021.RData: tweets2.R
+	"$(Dataprep)Rterm.exe" --vanilla --args "" < tweets2.R
+
+#merge_datasets 
+$(OUTPUT_DIR)/data_filtered.RData: merged_datasets.R
+	"$(Dataprep)Rterm.exe" --vanilla --args "" < merged_datasets.R
+
+
+#region differences ???
+
+
+#csv: make_csv.R
+	"$(Dataprep)Rterm.exe" --vanilla --args "" < "make_csv.R"
+
+
+
