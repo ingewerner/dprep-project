@@ -217,3 +217,22 @@ plot.ts(BLM2020$good_date)
 
 
 used: https://towardsdatascience.com/a-guide-to-mining-and-analysing-tweets-with-r-2f56818fdd16
+https://ourcodingclub.github.io/tutorials/time/
+```{r}
+sum(""(BLM2020))
+sum(is.na(BLM2020$Datetime))
+sum(is.na(BLM2020$Text))
+sum(is.na(BLM2020$Tweet.Id))
+sum(is.na(BLM2020$Username))
+sum(is.na(BLM2020$Location))
+sum(is.na(BLM2020$Location))
+summary(BLM2020)
+summary(BLM2020$Location)
+```
+
+*regression retweets*
+
+```{r}
+retweets_glm <-glm(Retweet ~ ., data=BLM2020)
+```
+
