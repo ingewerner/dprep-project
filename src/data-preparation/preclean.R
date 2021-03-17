@@ -12,12 +12,7 @@ library(tidyr)
 # install.packages(pandas)
 # library(pandas)
 
-# Open the datasets in R
-# blm2020 <- read.csv('../../data/BLM2020_Dutch_elections16.csv', stringsAsFactors = FALSE, sep = ',')
-# blm2021 <- read.csv('../../data/BLM2021_Dutch_elections15.csv', stringsAsFactors = FALSE, sep = ',')
-
-blm2020 <- read.csv('datasets/BLM2020_Dutch_elections16.csv', stringsAsFactors = FALSE, sep = ',', na.strings=c("", "NA"))
-#blm2021 <- read.csv('datasets/BLM2021_Dutch_elections15.csv', stringsAsFactors = FALSE, sep = ',', na.strings=c("", "NA"))
+blm2020 <- read.csv('../../datasets/dataset1/BLM2020_Dutch_elections16.csv', stringsAsFactors = FALSE, sep = ',', na.strings=c("", "NA"))
 
 # Get a first look of the data
 View(blm2020)
@@ -79,18 +74,13 @@ blm2020 = subset(blm2020, select = -c(Datetime))
 dir.create('../../gen/data-preparation/temp', recursive= TRUE)
 
 
-write.table(blm2020_filtered, '../../gen/data-preparation/temp/data2020_filtered.csv')
+write.table(blm2020_filtered, '../../gen/data-preparation/temp/tempfile1.csv')
 
 #-------------------------------------------------------------------------------
 # Preclean data 2021
 #-------------------------------------------------------------------------------\n")
 
-# Open the datasets in R
-# blm2020 <- read.csv('../../data/BLM2020_Dutch_elections16.csv', stringsAsFactors = FALSE, sep = ',')
-# blm2021 <- read.csv('../../data/BLM2021_Dutch_elections15.csv', stringsAsFactors = FALSE, sep = ',')
-
-# blm2020 <- read.csv('datasets/BLM2020_Dutch_elections16.csv', stringsAsFactors = FALSE, sep = ',', na.strings=c("", "NA"))
-blm2021 <- read.csv('datasets/BLM2021_Dutch_elections15.csv', stringsAsFactors = FALSE, sep = ',', na.strings=c("", "NA"))
+blm2021 <- read.csv('../../datasets/dataset2/BLM2021_Dutch_elections15.csv', stringsAsFactors = FALSE, sep = ',', na.strings=c("", "NA"))
 
 # Get a first look of the data
 View(blm2021)
@@ -151,4 +141,4 @@ blm2021 = subset(blm2021, select = -c(Datetime))
 dir.create('../../gen/data-preparation/temp', recursive= TRUE)
 
 
-write.table(blm2020_filtered, '../../gen/data-preparation/temp/data2021_filtered.csv')
+write.table(blm2020_filtered, '../../gen/data-preparation/temp/tempfile2.csv')
