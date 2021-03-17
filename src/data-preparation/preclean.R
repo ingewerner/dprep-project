@@ -33,19 +33,19 @@ blm2020 %>% distinct(blm2020$Tweet.Id)
 
 # See the type of data of the variables
 glimpse(blm2020)
-as.Date(blm2020$Datetime)
+as.Date(blm2020$datetime)
 
 # Separate the date and the time into 2 variables
-blm2020$Date <- sapply(strsplit(as.character(blm2020$Datetime), " "), "[", 1)
-blm2020$Time <- sapply(strsplit(as.character(blm2020$Datetime), " "), "[", 2)
+blm2020$date <- sapply(strsplit(as.character(blm2020$Datetime), " "), "[", 1)
+blm2020$time <- sapply(strsplit(as.character(blm2020$Datetime), " "), "[", 2)
 
 #see the class of the date
 class(blm2020$Date)
 # The data is a character and needs to be converted into a date variable
-blm2020$Date <- as.Date(blm2020$Date)
+blm2020$date <- as.Date(factor(blm2020$Date))
 
 # Make the Time variable readable 
-blm2020$Time<- gsub(x=blm2020$Time, pattern="+00:00",replacement="",fixed=T)
+blm2020$time<- gsub(x=blm2020$Time, pattern="+00:00",replacement="",fixed=T)
 
 # Remove the Datetime variable and create a new dataframe
 blm2020 = subset(blm2020, select = -c(Datetime))
@@ -71,7 +71,8 @@ blm2020 = subset(blm2020, select = -c(Datetime))
 
 #detect_language(blm2020$Text)
 
-dir.create('../../gen/data-preparation/temp', recursive= TRUE)
+
+#dir.create('../../gen/data-preparation/temp', recursive= TRUE)
 
 
 write.table(blm2020_filtered, '../../gen/data-preparation/temp/tempfile1.csv')
