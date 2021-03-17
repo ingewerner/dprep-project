@@ -102,18 +102,18 @@ blm2021 %>% distinct(blm2021$Tweet.Id)
 
 # See the type of data of the variables
 glimpse(blm2021)
-as.Date(blm2021$Datetime)
+as.Date(blm2021$datetime)
 
 # Separate the date and the time into 2 variables
-blm2021$Date <- sapply(strsplit(as.character(blm2021$Datetime), " "), "[", 1)
-blm2021$Time <- sapply(strsplit(as.character(blm2021$Datetime), " "), "[", 2)
+blm2021$date <- sapply(strsplit(as.character(blm2021$Datetime), " "), "[", 1)
+blm2021$time <- sapply(strsplit(as.character(blm2021$Datetime), " "), "[", 2)
 
 #see the class of the date
-class(blm2021$Date)
+class(blm2021$date)
 # The data is a character and needs to be converted into a date variable
-blm2021$Date <- as.Date(blm2021$Date)
+blm2021$Date <- as.Date(blm2021$date)
 # Make the Time variable readable 
-blm2021$Time<- gsub(x=blm2021$Time, pattern="+00:00",replacement="",fixed=T)
+blm2021$Time<- gsub(x=blm2021$time, pattern="+00:00",replacement="",fixed=T)
 
 # Remove the Datetime variable and create a new dataframe
 blm2021 = subset(blm2021, select = -c(Datetime))

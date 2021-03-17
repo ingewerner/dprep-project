@@ -211,6 +211,8 @@ references:
 1. https://towardsdatascience.com/a-guide-to-mining-and-analysing-tweets-with-r-2f56818fdd16
 2. https://ourcodingclub.github.io/tutorials/time/
 3. https://cran.r-project.org/web/packages/stopwords/stopwords.pdf
+4. https://www.dummies.com/programming/r/how-to-search-for-individual-words-in-r/
+5. https://r4ds.had.co.nz/data-visualisation.html
 ```{r}
 sum(""(BLM2020))
 sum(is.na(BLM2020$Datetime))
