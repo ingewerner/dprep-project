@@ -12,7 +12,7 @@ library(tidyr)
 # install.packages(pandas)
 # library(pandas)
 
-blm2020 <- read.csv('../../datasets/dataset1/BLM2020_Dutch_elections16.csv', stringsAsFactors = FALSE, sep = ',', na.strings=c("", "NA"))
+blm2020 <- read.csv('../../datasets/Dataset1/BLM2020_Dataset.csv', stringsAsFactors = FALSE, sep = '\t', na.strings=c("", "NA"))
 
 # Get a first look of the data
 View(blm2020)
@@ -80,7 +80,7 @@ write.table(blm2020_filtered, '../../gen/data-preparation/temp/tempfile1.csv')
 # Preclean data 2021
 #-------------------------------------------------------------------------------\n")
 
-blm2021 <- read.csv('../../datasets/dataset2/BLM2021_Dutch_elections15.csv', stringsAsFactors = FALSE, sep = ',', na.strings=c("", "NA"))
+blm2021 <- read.csv('../../datasets/dataset2/BLM2021_Dataset.csv', stringsAsFactors = FALSE, sep = '\t', na.strings=c("", "NA"))
 
 # Get a first look of the data
 View(blm2021)
