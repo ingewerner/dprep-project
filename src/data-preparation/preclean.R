@@ -12,7 +12,11 @@ library(tidyr)
 # install.packages(pandas)
 # library(pandas)
 
+<<<<<<< HEAD
 blm2020 <- read.csv('../../datasets/dataset1/BLM2020_Dataset.csv', stringsAsFactors = FALSE, sep = ',', na.strings=c("", "NA"))
+=======
+blm2020 <- read.csv('../../datasets/Dataset1/BLM2020_Dataset.csv', stringsAsFactors = FALSE, sep = '\t', na.strings=c("", "NA"))
+>>>>>>> 8a9b1baa6daf5453cc64f7c976eb202588348505
 
 # Get a first look of the data
 View(blm2020)
@@ -33,19 +37,19 @@ blm2020 %>% distinct(blm2020$Tweet.Id)
 
 # See the type of data of the variables
 glimpse(blm2020)
-as.Date(blm2020$Datetime)
+as.Date(blm2020$datetime)
 
 # Separate the date and the time into 2 variables
-blm2020$Date <- sapply(strsplit(as.character(blm2020$Datetime), " "), "[", 1)
-blm2020$Time <- sapply(strsplit(as.character(blm2020$Datetime), " "), "[", 2)
+blm2020$date <- sapply(strsplit(as.character(blm2020$Datetime), " "), "[", 1)
+blm2020$time <- sapply(strsplit(as.character(blm2020$Datetime), " "), "[", 2)
 
 #see the class of the date
 class(blm2020$Date)
 # The data is a character and needs to be converted into a date variable
-blm2020$Date <- as.Date(blm2020$Date)
+blm2020$date <- as.Date(factor(blm2020$Date))
 
 # Make the Time variable readable 
-blm2020$Time<- gsub(x=blm2020$Time, pattern="+00:00",replacement="",fixed=T)
+blm2020$time<- gsub(x=blm2020$Time, pattern="+00:00",replacement="",fixed=T)
 
 # Remove the Datetime variable and create a new dataframe
 blm2020 = subset(blm2020, select = -c(Datetime))
@@ -71,7 +75,8 @@ blm2020 = subset(blm2020, select = -c(Datetime))
 
 #detect_language(blm2020$Text)
 
-dir.create('../../gen/data-preparation/temp', recursive= TRUE)
+
+#dir.create('../../gen/data-preparation/temp', recursive= TRUE)
 
 
 write.table(blm2020_filtered, '../../gen/data-preparation/temp/tempfile1.csv')
@@ -80,7 +85,11 @@ write.table(blm2020_filtered, '../../gen/data-preparation/temp/tempfile1.csv')
 # Preclean data 2021
 #-------------------------------------------------------------------------------\n")
 
+<<<<<<< HEAD
 blm2021 <- read.csv('../../datasets/dataset2/BLM2021_Dataset.csv', stringsAsFactors = FALSE, sep = ',', na.strings=c("", "NA"))
+=======
+blm2021 <- read.csv('../../datasets/dataset2/BLM2021_Dataset.csv', stringsAsFactors = FALSE, sep = '\t', na.strings=c("", "NA"))
+>>>>>>> 8a9b1baa6daf5453cc64f7c976eb202588348505
 
 # Get a first look of the data
 View(blm2021)
@@ -101,18 +110,18 @@ blm2021 %>% distinct(blm2021$Tweet.Id)
 
 # See the type of data of the variables
 glimpse(blm2021)
-as.Date(blm2021$Datetime)
+as.Date(blm2021$datetime)
 
 # Separate the date and the time into 2 variables
-blm2021$Date <- sapply(strsplit(as.character(blm2021$Datetime), " "), "[", 1)
-blm2021$Time <- sapply(strsplit(as.character(blm2021$Datetime), " "), "[", 2)
+blm2021$date <- sapply(strsplit(as.character(blm2021$Datetime), " "), "[", 1)
+blm2021$time <- sapply(strsplit(as.character(blm2021$Datetime), " "), "[", 2)
 
 #see the class of the date
-class(blm2021$Date)
+class(blm2021$date)
 # The data is a character and needs to be converted into a date variable
-blm2021$Date <- as.Date(blm2021$Date)
+blm2021$Date <- as.Date(blm2021$date)
 # Make the Time variable readable 
-blm2021$Time<- gsub(x=blm2021$Time, pattern="+00:00",replacement="",fixed=T)
+blm2021$Time<- gsub(x=blm2021$time, pattern="+00:00",replacement="",fixed=T)
 
 # Remove the Datetime variable and create a new dataframe
 blm2021 = subset(blm2021, select = -c(Datetime))
