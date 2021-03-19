@@ -6,9 +6,11 @@
 # setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Load packages
+#install.packages('textclean')
 library(data.table)
 library(dplyr)
 library(tidyr)
+library(textclean)
 # install.packages(pandas)
 # library(pandas)
 
@@ -65,23 +67,49 @@ for (i in seq(along=data_blm)) {
     # Remove the Datetime variable and create a new dataframe
     blmdata = subset(blmdata, select = -c(datetime))
     
-    # In order you want to remove attributes you don't need, use the following function with X and Y being attributes
-    # blm2020 = subset(blm2020, select = -c(X, Y))
     
-    # Filter on the location
-    # location <- c("NL", "nl", "Netherlands", "netherlands", "The Netherlands", "the netherlands", "Nederland", "nederland", "Holland", "holland", "Amsterdam", "010", "020", "Rotterdam", "Het mooie Brabant")
-    # blm2020_filtered <- blm2020 %>% filter(Location %in% location)
+    # remove weird characters (rendered) content tweet and user description 
+    blmdata$text <- gsub(x=blmdata$text, pattern="\r\n",replacement="", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern="â€¢",replacement="", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "â˜… ", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "ðŸ", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "ðŸ¤", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "Ã", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "©", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "HÃ©", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "˜‰", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "¤”˜‚¤£‘Š", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "â€™", replacement = "", fixed = T)
+    #blmdata$rendered_content <- gsub(x=blmdata$rendered_content, pattern="\r\n",replacement="", fixed = T)
+    #blmdata$rendered_content <- gsub(x=blmdata$rendered_content, pattern="â€¢",replacement="", fixed = T)
+    #blmdata$rendered_content <- gsub(x=blmdata$rendered_content, pattern= "â˜… ", replacement = "", fixed = T)
+    #blmdata$rendered_content <- gsub(x=blmdata$rendered_Content, pattern= "ðŸ", replacement = "", fixed = T)
+    #blmdata$rendered_content <- gsub(x=blmdata$rendered_Content, pattern= "¤", replacement = "", fixed = T)
+    #blmdata$rendered_content <- gsub(x=blmdata$rendered_Content, pattern= "HÃ©", replacement = "", fixed = T)
+    #blmdata$rendered_content <- gsub(x=blmdata$rendered_Content, pattern= "Ã", replacement = "", fixed = T)
+    #blmdata$rendered_content <- gsub(x=blmdata$rendered_Content, pattern= "©", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern="\r\n",replacement="", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern="â€¢",replacement="", fixed = T)
+    blmdata$user_description<- gsub(x=blmdata$user_description, pattern= "â˜… ", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "ðŸ", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "ðŸ¤", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "Ã", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "©", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "â", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "™", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "Œ", replacement = "", fixed = T)
     
-    #If we need to filter on date
-    # bike_share_rides_past <- bike_share_rides %>%
-    #   filter(date <= today())
     
-    #Language detection, doesn't work for me
-    #install.packages("cld2")
-    #library("cld2")
-    #install.packages("cld3")
     
-    #detect_language(blm2020$Text)
+    # clean source attribute to useful
+    html_tags <- c(
+        "<bold>Random</bold> text with symbols: &nbsp; &lt; &gt; &amp; &quot; &apos;",
+        "<p>More text</p> &cent; &pound; &yen; &euro; &copy; &reg;"
+    )
+    
+    blmdata$source_tweet<- replace_html(blmdata$source_tweet)
+    
+    
     prepared_data[[i]] <- blmdata
     
     write.table(blmdata, paste0('../../gen/data-preparation/temp/', extracted_filename))
@@ -90,7 +118,6 @@ for (i in seq(along=data_blm)) {
 
 
 rm(blmdata)
-
 
 prepared_data[[1]]
 prepared_data[[2]]
