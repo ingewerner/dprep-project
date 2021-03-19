@@ -12,7 +12,51 @@ library(tidyr)
 # install.packages(pandas)
 # library(pandas)
 
+# download data 
+
 blm2020 <- read.csv('../../datasets/Dataset1/BLM2020_Dataset.csv', stringsAsFactors = FALSE, sep = '\t', na.strings=c("", "NA"))
+
+# this what we need to do
+
+my_data = lapply(c('../../datasets/Dataset1/BLM2020_Dataset.csv',
+                   '../../datasets/Dataset2/BLM2021_Dataset.csv'),
+                  function(fn) {
+                  read.csv(fn, stringsAsFactors = FALSE, sep = '\t', na.strings=c("", "NA"))})
+
+
+  for (i in seq(along=my_data)) {
+    print(i)
+    blmdata = my_data[[i]]
+    print(count(blmdata),
+          nrow(blmdata))
+  } 
+# 
+    count(blmdata)
+    is.na(blmdata)
+    sum(is.na(blmdata$datetime))
+    sum(is.na(blmdata$quoted_tweet))
+    sum(is.na(blmdata$retweeted_tweet))
+    sum(is.na(blmdata$location))
+    sum(is.na(blmdata$location))
+    which(is.na(blmdata))
+  }
+                  }
+#### this hannes example
+
+my_data = lapply(c('../../datasets/Dataset1/BLM2020_Dataset.csv',
+                   '../../datasets/Dataset2/BLM2021_Dataset.csv'),
+                 function(fn) {
+                   read.csv(fn, stringsAsFactors = FALSE, sep = '\t', na.strings=c("", "NA"))})
+
+
+for (i in seq(along=my_data)) {
+  print(i)
+  blmdata = my_data[[i]]
+  print(nrow(blmdata))
+  # all of your cleaning and prep and here
+  
+}
+  
 
 # Get a first look of the data
 # View(blm2020)
@@ -27,10 +71,9 @@ sum(is.na(blm2020$retweeted_tweet))
 sum(is.na(blm2020$quoted_tweet))
 which(is.na(blm2020))
 
-blm2020$retweeted_tweet[is.na(blm2020$retweeted_tweet)] <- "No"
+blm2020$retweeted_tweet[is.na(blm2020$retweeted_tweet)] <- 0
 blm2020$quoted_tweet[is.na(blm2020$quoted_tweet)] <- "No"
 
-blm2020<- na.omit(blm2020) #location NA deletes here, do we want this? If we use Language to filter on Dutch tweets, we can maybe make NA's <- 0 for location 
 
 # Remove duplicates with the distinct function
 sum(duplicated(blm2020))
@@ -93,7 +136,9 @@ count(blm2021)
 #sum(is.na(blm2021$location))
 #which(is.na(blm2021))
 
-#blm2021<- na.omit(blm2021) 
+blm2021$retweeted_tweet[is.na(blm2021$retweeted_tweet)] <- 0
+blm2021$quoted_tweet[is.na(blm2021$quoted_tweet)] <- "No"
+
 
 # Remove duplicates with the distinct function
 sum(duplicated(blm2021)) 
