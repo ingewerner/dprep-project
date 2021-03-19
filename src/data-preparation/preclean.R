@@ -75,7 +75,7 @@ blm2020 = subset(blm2020, select = -c(datetime))
 
 dir.create('../../gen/data-preparation/temp', recursive= TRUE)
 
-write.table(blm2020_filtered, '../../gen/data-preparation/temp/cleaned2020.csv')
+write.table(blm2020, '../../gen/data-preparation/temp/cleaned2020.csv')
 
 #-------------------------------------------------------------------------------
 # Preclean data 2021
@@ -134,4 +134,4 @@ blm2021 = subset(blm2021, select = -c(datetime))
 #library("cld2")
 #install.packages("cld3")
 
-write.table(blm2020_filtered, '../../gen/data-preparation/temp/cleaned2021.csv')
+write.table(blm2021, '../../gen/data-preparation/temp/cleaned2021.csv')
