@@ -1,14 +1,6 @@
 
-all: download_data data_cleaned
-download_data: ../../datasets/BLM2020_dataset.csv ../../datasets/BLM2021_dataset.csv
-data_cleaned: ../../gen/data-preparation/temp/BLM2020_dataset.csv ../../gen/data-preparation/temp/BLM2021_dataset.csv
+all: ../../datasets/BLM2020_dataset.csv ../../datasets/BLM2021_dataset.csv 
 
+../../datasets/BLM2020_dataset.csv ../../datasets/BLM2021_dataset.csv:
+	Rscript download_data.R
 
-download_data: ../../datasets/BLM2020_dataset.csv ../../datasets/BLM2021_dataset.csv
-	../../datasets/BLM2020_dataset.csv ../../datasets/BLM2021_dataset.csv: Rscript download_data.R
-		Rscript download_data.R
-	
-
-data_cleaned: ../../gen/data-preparation/temp/BLM2020_dataset.csv ../../gen/data-preparation/temp/BLM2021_dataset.csv
-	../../gen/data-preparation/temp/BLM2020_dataset.csv ../../gen/data-preparation/temp/BLM2021_dataset: ../../datasets/BLM2020_dataset.csv ../../datasets/BLM2021_dataset.csv preclean.R
-		Rscript preclean.R
