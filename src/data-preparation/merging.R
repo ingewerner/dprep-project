@@ -7,3 +7,5 @@ BLM_merged <- rbind(BLM2020_filterd, BLM2021_filtered)
 
 # overwrite to csv
 write.csv(BLM_merged, '../../gen/data-preparation/merging.csv')
+
+count(filter(blm2021, grepl('PVDA | pvv | D66 | GSP | GroenLinks | PvDD | SP | CDA', text)))
