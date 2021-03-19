@@ -14,20 +14,10 @@ library(tidyr)
 
 # download data 
 
-blm2020 <-
-  read.table(
-    'https://www.dropbox.com/s/7ywlwmynitdb2rr/BLM2020_Dataset.csv?dl=0',
-    sep = '\t',
-    quote = "",
-    comment.char = '',
-    header = T,
-    encoding = 'UTF-8',
-    na.strings=c("", "NA")
-  )
 
 # this what we need to do
-filenames = c('../../datasets/Dataset1/BLM2020_Dataset.csv',
-              '../../datasets/Dataset2/BLM2021_Dataset.csv')
+filenames = c('../../datasets/BLM2020_dataset.csv',
+              '../../datasets/BLM2021_dataset.csv')
 
 
 my_data = lapply(filenames,
@@ -39,7 +29,6 @@ my_data = lapply(filenames,
                      na.strings = c("", "NA")
                    )
                  })
-
 
 # Loop through all of the data
 dir.create('../../gen/data-preparation/temp', recursive= TRUE)
@@ -53,8 +42,6 @@ for (i in seq(along=my_data)) {
     extracted_filename = rev(strsplit(fn, '/')[[1]])[1]
     
     # Get a first look of the data
-    # View(blm2020)
-    count(blmdata)
     
     blmdata$retweeted_tweet[is.na(blmdata$retweeted_tweet)] <- 0
     blmdata$quoted_tweet[is.na(blmdata$quoted_tweet)] <- "No"
@@ -77,7 +64,7 @@ for (i in seq(along=my_data)) {
     blmdata$date <- as.Date(blmdata$date, format = c("%Y-%m-%d"))
     
     # Make the Time variable readable 
-    blmdata$time<- gsub(x=blmdata$time, pattern="+00:00",replacement="",fixed=T)
+    blmdata$time <- gsub(x=blmdata$time, pattern="+00:00",replacement="",fixed=T)
     
     # Remove the Datetime variable and create a new dataframe
     blmdata = subset(blmdata, select = -c(datetime))
