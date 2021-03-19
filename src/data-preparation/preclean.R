@@ -20,45 +20,47 @@ count(blm2020)
 
 # See if there are missing values 
 is.na(blm2020)
-sum(is.na(blm2020$Datetime))
-sum(is.na(blm2020$Tweet.Id))
-sum(is.na(blm2020$Location))
+sum(is.na(blm2020$datetime))
+sum(is.na(blm2020$tweet_id))
+sum(is.na(blm2020$location))
+sum(is.na(blm2020$retweeted_tweet))
+sum(is.na(blm2020$quoted_tweet))
 which(is.na(blm2020))
 
-blm2020<- na.omit(blm2020) 
+blm2020$retweeted_tweet[is.na(blm2020$retweeted_tweet)] <- "No"
+blm2020$quoted_tweet[is.na(blm2020$quoted_tweet)] <- "No"
+
+blm2020<- na.omit(blm2020) #location NA deletes here, do we want this? If we use Language to filter on Dutch tweets, we can maybe make NA's <- 0 for location 
 
 # Remove duplicates with the distinct function
 sum(duplicated(blm2020))
-blm2020 %>% distinct(blm2020$Tweet.Id)
+blm2020 %>% distinct(blm2020$tweet_id)
 
 # See the type of data of the variables
 glimpse(blm2020)
-as.Date(blm2020$Datetime)
+as.Date(blm2020$datetime)
 
 # Separate the date and the time into 2 variables
-blm2020$Date <- sapply(strsplit(as.character(blm2020$Datetime), " "), "[", 1)
-blm2020$Time <- sapply(strsplit(as.character(blm2020$Datetime), " "), "[", 2)
+blm2020$date <- sapply(strsplit(as.character(blm2020$datetime), " "), "[", 1)
+blm2020$time <- sapply(strsplit(as.character(blm2020$datetime), " "), "[", 2)
 
 #see the class of the date
-class(blm2020$Date)
+class(blm2020$date)
 # The data is a character and needs to be converted into a date variable
-blm2020$Date <- as.Date(blm2020$Date)
+blm2020$date <- as.Date(factor(blm2020$date))
 
 # Make the Time variable readable 
-blm2020$Time<- gsub(x=blm2020$Time, pattern="+00:00",replacement="",fixed=T)
+blm2020$time<- gsub(x=blm2020$time, pattern="+00:00",replacement="",fixed=T)
 
 # Remove the Datetime variable and create a new dataframe
-blm2020 = subset(blm2020, select = -c(Datetime))
+blm2020 = subset(blm2020, select = -c(datetime))
 
-# Remove attributes you don't need
+# In order you want to remove attributes you don't need, use the following function with X and Y being attributes
 # blm2020 = subset(blm2020, select = -c(X, Y))
 
 # Filter on the location
 # location <- c("NL", "nl", "Netherlands", "netherlands", "The Netherlands", "the netherlands", "Nederland", "nederland", "Holland", "holland", "Amsterdam", "010", "020", "Rotterdam", "Het mooie Brabant")
 # blm2020_filtered <- blm2020 %>% filter(Location %in% location)
-
-# View(blm2020_filtered)
-# Try group_by
 
 #If we need to filter on date
 # bike_share_rides_past <- bike_share_rides %>%
@@ -72,7 +74,6 @@ blm2020 = subset(blm2020, select = -c(Datetime))
 #detect_language(blm2020$Text)
 
 dir.create('../../gen/data-preparation/temp', recursive= TRUE)
-
 
 write.table(blm2020_filtered, '../../gen/data-preparation/temp/tempfile1.csv')
 
@@ -88,44 +89,41 @@ count(blm2021)
 
 # See if there are missing values 
 is.na(blm2021)
-sum(is.na(blm2021$Datetime))
-sum(is.na(blm2021$Tweet.Id))
-sum(is.na(blm2021$Location))
+sum(is.na(blm2021$datetime))
+sum(is.na(blm2021$tweet_id))
+sum(is.na(blm2021$location))
 which(is.na(blm2021))
 
 blm2021<- na.omit(blm2021) 
 
 # Remove duplicates with the distinct function
 sum(duplicated(blm2021))
-blm2021 %>% distinct(blm2021$Tweet.Id)
+blm2021 %>% distinct(blm2021$tweet_id)
 
 # See the type of data of the variables
 glimpse(blm2021)
-as.Date(blm2021$Datetime)
+as.Date(blm2021$datetime)
 
 # Separate the date and the time into 2 variables
-blm2021$Date <- sapply(strsplit(as.character(blm2021$Datetime), " "), "[", 1)
-blm2021$Time <- sapply(strsplit(as.character(blm2021$Datetime), " "), "[", 2)
+blm2021$date <- sapply(strsplit(as.character(blm2021$datetime), " "), "[", 1)
+blm2021$time <- sapply(strsplit(as.character(blm2021$datetime), " "), "[", 2)
 
 #see the class of the date
-class(blm2021$Date)
+class(blm2021$date)
 # The data is a character and needs to be converted into a date variable
-blm2021$Date <- as.Date(blm2021$Date)
+blm2021$date <- as.Date(blm2021$date)
 # Make the Time variable readable 
-blm2021$Time<- gsub(x=blm2021$Time, pattern="+00:00",replacement="",fixed=T)
+blm2021$time<- gsub(x=blm2021$time, pattern="+00:00",replacement="",fixed=T)
 
 # Remove the Datetime variable and create a new dataframe
-blm2021 = subset(blm2021, select = -c(Datetime))
+blm2021 = subset(blm2021, select = -c(datetime))
 
-# Remove attributes you don't need
+# In order you want to remove attributes you don't need, use the following function with X and Y being attributes
 # blm2020 = subset(blm2020, select = -c(X, Y))
 
 # Filter on the location
 # location <- c("NL", "nl", "Netherlands", "netherlands", "The Netherlands", "the netherlands", "Nederland", "nederland", "Holland", "holland", "Amsterdam", "010", "020", "Rotterdam", "Het mooie Brabant")
 # blm2020_filtered <- blm2020 %>% filter(Location %in% location)
-
-# View(blm2020_filtered)
-# Try group_by
 
 #If we need to filter on date
 # bike_share_rides_past <- bike_share_rides %>%
@@ -135,10 +133,5 @@ blm2021 = subset(blm2021, select = -c(Datetime))
 #install.packages("cld2")
 #library("cld2")
 #install.packages("cld3")
-
-#detect_language(blm2020$Text)
-
-dir.create('../../gen/data-preparation/temp', recursive= TRUE)
-
 
 write.table(blm2020_filtered, '../../gen/data-preparation/temp/tempfile2.csv')
