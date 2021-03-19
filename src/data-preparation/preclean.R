@@ -15,18 +15,14 @@ library(tidyr)
 # download data 
 
 
-# this what we need to do
 filenames = c('../../datasets/BLM2020_dataset.csv',
               '../../datasets/BLM2021_dataset.csv')
 
 
-my_data = lapply(filenames,
+data_blm = lapply(filenames,
                  function(fn) {
-                   read.csv(
-                     fn,
-                     stringsAsFactors = FALSE,
-                     sep = '\t',
-                     na.strings = c("", "NA")
+                   fread(
+                     fn, fill = TRUE
                    )
                  })
 
@@ -35,14 +31,14 @@ dir.create('../../gen/data-preparation/temp', recursive= TRUE)
 
 prepared_data <- list()
 
-for (i in seq(along=my_data)) {
+for (i in seq(along=data_blm)) {
     print(i)
-    blmdata = my_data[[i]]
+    blmdata = data_blm[[i]]
     fn = filenames[i]
     extracted_filename = rev(strsplit(fn, '/')[[1]])[1]
+
     
     # Get a first look of the data
-    
     blmdata$retweeted_tweet[is.na(blmdata$retweeted_tweet)] <- 0
     blmdata$quoted_tweet[is.na(blmdata$quoted_tweet)] <- "No"
     
@@ -50,19 +46,19 @@ for (i in seq(along=my_data)) {
     # Remove duplicates with the distinct function
     sum(duplicated(blmdata))
     blmdata %>% distinct(blmdata$tweet_id)
-    
+   
     # See the type of data of the variables
     glimpse(blmdata)
     
     # Separate the date and the time into 2 variables
     blmdata$date <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 1)
     blmdata$time <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 2)
-    
+   
     #see the class of the date
     class(blmdata$date)
     # The data is a character and needs to be converted into a date variable
     blmdata$date <- as.Date(blmdata$date, format = c("%Y-%m-%d"))
-    
+   
     # Make the Time variable readable 
     blmdata$time <- gsub(x=blmdata$time, pattern="+00:00",replacement="",fixed=T)
     
@@ -91,6 +87,7 @@ for (i in seq(along=my_data)) {
     write.table(blmdata, paste0('../../gen/data-preparation/temp/', extracted_filename))
     
 }
+
 
 rm(blmdata)
 
