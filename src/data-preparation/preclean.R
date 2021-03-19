@@ -22,7 +22,7 @@ filenames = c('../../datasets/BLM2020_dataset.csv',
 data_blm = lapply(filenames,
                  function(fn) {
                    fread(
-                     fn, fill = TRUE
+                      fn
                    )
                  })
 
