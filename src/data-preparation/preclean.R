@@ -15,7 +15,7 @@ library(tidyr)
 blm2020 <- read.csv('../../datasets/Dataset1/BLM2020_Dataset.csv', stringsAsFactors = FALSE, sep = '\t', na.strings=c("", "NA"))
 
 # Get a first look of the data
-View(blm2020)
+# View(blm2020)
 count(blm2020)
 
 # See if there are missing values 
@@ -38,7 +38,6 @@ blm2020 %>% distinct(blm2020$tweet_id)
 
 # See the type of data of the variables
 glimpse(blm2020)
-as.Date(blm2020$datetime)
 
 # Separate the date and the time into 2 variables
 blm2020$date <- sapply(strsplit(as.character(blm2020$datetime), " "), "[", 1)
@@ -47,7 +46,7 @@ blm2020$time <- sapply(strsplit(as.character(blm2020$datetime), " "), "[", 2)
 #see the class of the date
 class(blm2020$date)
 # The data is a character and needs to be converted into a date variable
-blm2020$date <- as.Date(factor(blm2020$date))
+blm2020$date <- as.Date(blm2020$date, format = c("%Y-%m-%d"))
 
 # Make the Time variable readable 
 blm2020$time<- gsub(x=blm2020$time, pattern="+00:00",replacement="",fixed=T)
@@ -84,25 +83,24 @@ write.table(blm2020, '../../gen/data-preparation/temp/cleaned2020.csv')
 blm2021 <- read.csv('../../datasets/dataset2/BLM2021_Dataset.csv', stringsAsFactors = FALSE, sep = '\t', na.strings=c("", "NA"))
 
 # Get a first look of the data
-View(blm2021)
+#View(blm2021)
 count(blm2021)
 
 # See if there are missing values 
-is.na(blm2021)
-sum(is.na(blm2021$datetime))
-sum(is.na(blm2021$tweet_id))
-sum(is.na(blm2021$location))
-which(is.na(blm2021))
+#is.na(blm2021)
+#sum(is.na(blm2021$datetime))
+#sum(is.na(blm2021$tweet_id))
+#sum(is.na(blm2021$location))
+#which(is.na(blm2021))
 
-blm2021<- na.omit(blm2021) 
+#blm2021<- na.omit(blm2021) 
 
 # Remove duplicates with the distinct function
-sum(duplicated(blm2021))
+sum(duplicated(blm2021)) 
 blm2021 %>% distinct(blm2021$tweet_id)
 
 # See the type of data of the variables
 glimpse(blm2021)
-as.Date(blm2021$datetime)
 
 # Separate the date and the time into 2 variables
 blm2021$date <- sapply(strsplit(as.character(blm2021$datetime), " "), "[", 1)
@@ -111,7 +109,8 @@ blm2021$time <- sapply(strsplit(as.character(blm2021$datetime), " "), "[", 2)
 #see the class of the date
 class(blm2021$date)
 # The data is a character and needs to be converted into a date variable
-blm2021$date <- as.Date(blm2021$date)
+
+blm2021$date <- as.Date(blm2021$date, format = "%Y-%m-%d")
 # Make the Time variable readable 
 blm2021$time<- gsub(x=blm2021$time, pattern="+00:00",replacement="",fixed=T)
 
