@@ -7,9 +7,7 @@ output: html_notebook
 
 ```{r}
 library(rtweet)
-library(dplyr)
 library(tidyr)
-library(tidytext)
 library(ggplot.multistats)
 library(ggplot2)
 library(forestmangr)
