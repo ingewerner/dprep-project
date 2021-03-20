@@ -7,7 +7,9 @@ output: html_notebook
 
 ```{r}
 library(rtweet)
+library(dplyr)
 library(tidyr)
+library(tidytext)
 library(ggplot.multistats)
 library(ggplot2)
 library(forestmangr)
@@ -22,6 +24,8 @@ library(tokenizers)
 library(stopwords)
 library(tidyverse)
 library(lobstr)
+library(glue)
+library(stringr)
 
 ```
 *Loading the data*
@@ -327,6 +331,77 @@ ggplot(data = blm2021) +
 state.name[grep ("VVD", "PvdA", "PVV", "CDA", "SP", "CU", "PvdD", state.name)]
 ```
 
+```{r}
+#remive dollar signs
+
+blm2020<-gsub("\\$", "", blm2020)
+blm2021<-gsub("\\$","", blm2021)
+
+```
+
+*Sentiment analysis*
+
+```{r}
+# create a list of tokens
+#https://www.kaggle.com/rtatman/tokenization-tutorial
+
+tokens_2020<-data.frame(text= blm2020) %>% unnest_tokens(word, text)
+tokens_2020
+tokens_2021<-data.frame(text=blm2021) %>% unnest_tokens(word, text)
+tokens_2021
+```
+
+Now that we have a list of tokens, we need to compare them against a list of words with either positive or negative sentiment.
+
+```{r}
+# get the sentiment from the first text: 
+tokens_2020 %>%
+  inner_join(get_sentiments("bing")) %>% # pull out only sentiment words
+  count(sentiment) %>% # count the # of positive & negative words
+  spread(sentiment, n, fill = 0) %>% # made data wide rather than narrow
+  mutate(sentiment = positive - negative) # # of positive words - # of negative words
+
+```
+```{r}
+#do the same for 2021
+
+tokens_2021 %>%
+  inner_join(get_sentiments("bing")) %>% # pull out only sentiment words
+  count(sentiment) %>% # count the # of positive & negative words
+  spread(sentiment, n, fill = 0) %>% # made data wide rather than narrow
+  mutate(sentiment = positive - negative) # # of positive words - # of negative words
+
+```
+
+
+```{r}
+blm2020$sentiment<-get_sentiment(blm2020$text)
+blm2021$sentiment<-get_sentiment(blm2021$text)
+
+```
+
+Now we will perform an ANOVA with DV the sentiment of the text and control variablw the source of the tweet
+
+https://www.scribbr.com/statistics/anova-in-r/
+
+```{r}
+#2020
+one.way_2020 <- aov(sentiment ~ source_tweet , data = blm2020)
+
+summary(one.way_2020)
+```
+```{r}
+#2021
+
+one.way_2021 <- aov(sentiment ~ source_tweet, data = blm2021)
+
+summary(one.way_2021)
+
+
+```
+
+
+
 #How can we measure how many tweets are made by location?
 
 references:
@@ -335,6 +410,7 @@ references:
 3. https://cran.r-project.org/web/packages/stopwords/stopwords.pdf
 4. https://www.dummies.com/programming/r/how-to-search-for-individual-words-in-r/
 5. https://r4ds.had.co.nz/data-visualisation.html
+6. Anova and sentiment analysis: https://www.kaggle.com/rtatman/tutorial-sentiment-analysis-in-r
 ```{r}
 sum(""(BLM2020))
 sum(is.na(BLM2020$Datetime))
@@ -372,7 +448,7 @@ blm2020$source_tweet<- replace_html(blm2020$source_tweet)
 *running the test*
 
 ```{r}
-library(car)
+#creating a 
 
 one.way <- aov(source_tweet ~ ., data = blm2020)
 
