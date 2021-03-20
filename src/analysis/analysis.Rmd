@@ -1,0 +1,237 @@
+---
+title: "BLM data analysis"
+output: html_notebook
+---
+
+*Installing required packages*
+
+```{r}
+library(rtweet)
+library(dplyr)
+library(tidyr)
+library(tidytext)
+library(ggplot.multistats)
+library(ggplot2)
+library(forestmangr)
+library(syuzhet)
+library(tidyverse)
+library(readxl) # read excel
+library(tibble) # tobble dataframe
+library(dplyr) # piping
+library(stringr) # character manipulation
+library(tidytext)
+library(tokenizers)
+library(stopwords)
+library(tidyverse)
+library(lobstr)
+
+```
+*Loading the data*
+
+```{r}
+#temporary, will change once the merged file is ready
+BLM2020 <- blm2020
+BLM2021 <- blm2021
+
+```
+
+
+
+*Filtering by location*
+
+```{r}
+#filtered_df1 = BLM2020[BLM2020$Location=='NL']
+#filtered_df2 = BLM2021[BLM2021$Location=='NL']
+
+```
+
+*Show the ratio of replies, retweets and likes*
+
+```{r}
+#Retweets
+BLM2020_retweets<-BLM2020[BLM2020$Retweet > 1, ]
+BLM2020_retweets
+BLM2021_retweets<-BLM2021[BLM2021$Retweet > 1,]
+BLM2021_retweets
+```
+
+```{r}
+#Likes
+BLM2020_likes<-BLM2020[BLM2020$Like >1, ]
+BLM2020_likes
+BLM2021_likes<-BLM2021[BLM2021$Like >1, ]
+BLM2021_likes
+```
+
+
+```{r}
+#Replies
+BLM2020_replies<-BLM2020[BLM2020$Reply >1, ]
+BLM2020_replies
+BLM2021_replies<-BLM2021[BLM2021$Reply >1, ]
+BLM2021_replies
+
+```
+*Creating a data frame*
+
+```{r}
+
+data2020<-data.frame(category=c("Retweets", "Likes", "Replies"), count=c(323, 763, 157))
+data2020
+data2021<-data.frame(category=c("Retweets", "Likes", "Replies"), count=c(324, 764, 157))
+data2021
+```
+
+*Visualising the data*
+```{r}
+#Adding columns
+data2020$fraction = data2020$count / sum(data2020$count)
+data2020$percentage = data2020$count / sum(data2020$count) * 100
+data2020$ymax = cumsum(data2020$fraction)
+data2020$ymin = c(0, head(data2020$ymax, n=-1))
+
+#Rounding up
+
+data2020 <- round_df(data2020, 2)
+
+# Specify what the legend should say
+Type_of_Tweet <- paste(data2020$category, data2020$percentage, "%")
+
+ggplot(data2020, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Type_of_Tweet)) +
+  geom_rect() +
+  coord_polar(theta="y") + 
+  xlim(c(2, 4)) +
+  theme_void() +
+  theme(legend.position = "right")
+
+```
+
+*Most frequent words in the tweets*
+Lets see which words are more frequently used in the posts of 2020
+
+```{r}
+#cleaning the data
+BLM2020$text <- gsub("@\\S*", "", BLM2020$text) 
+BLM2020$text <- gsub("amp", "", BLM2020$text) 
+BLM2020$text <- gsub("[\r\n]", "", BLM2020$text)
+BLM2020$text <- gsub("[[:punct:]]", "", BLM2020$text)
+```
+
+```{r}
+#removing stop words from the text - so the most frequent words are not or at and
+
+tweets <- BLM2020 %>%
+  select(text) %>%
+  unnest_tokens(word, text)
+tweets <- tweets %>%
+  anti_join(get_stopwords(language = "nl", source = "snowball"))
+
+```
+
+```{r}
+#making a histogram
+tweets %>% # gives you a bar chart of the most frequent words found in the tweets
+  count(word, sort = TRUE) %>%
+  top_n(15) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(x = word, y = n)) +
+  geom_col() +
+  xlab(NULL) +
+  coord_flip() +
+  labs(y = "Count",
+       x = "Unique words",
+       title = "Most frequent words found in the tweets of #BLM",
+       subtitle = "Stop words removed from the list")
+
+```
+
+*Sentiment analysis for positive or negative tweets*
+
+```{r}
+# Converting tweets to ASCII to trackle strange characters
+tweets <- iconv(tweets, from="UTF-8", to="ASCII", sub="")
+
+# removing retweets, in case needed 
+tweets <-gsub("(RT|via)((?:\\b\\w*@\\w+)+)","",tweets)
+
+# removing mentions, in case needed
+tweets <-gsub("@\\w+","",tweets)
+ew_sentiment<-get_nrc_sentiment((tweets))
+sentimentscores<-data.frame(colSums(ew_sentiment[,]))
+names(sentimentscores) <- "Score"
+sentimentscores <- cbind("sentiment"=rownames(sentimentscores),sentimentscores)
+rownames(sentimentscores) <- NULL
+ggplot(data=sentimentscores,aes(x=sentiment,y=Score))+
+  geom_bar(aes(fill=sentiment),stat = "identity")+
+  theme(legend.position="none")+
+  xlab("Sentiments")+ylab("Scores")+
+  ggtitle("Total sentiment based on scores")+
+  theme_minimal()
+
+```
+*Visualizing the variables in the dataset*
+
+```{r}
+#Making a ggplot
+#ploting retweets by location
+ggplot(data = BLM2020) + 
+  geom_point(mapping = aes(x = retweet, y = location))
+```
+```{r}
+#ploting retweets by datetime
+#need to separate date from time
+ggplot(data = BLM2020) + 
+  geom_point(mapping = aes(x = retweet, y = datetime), color = "blue")
+
+```
+*Graphing users amount of followers and user amount friends*
+
+```{r}
+ggplot(data = BLM2020) + 
+  geom_point(mapping = aes(x = user_amount_followers, y = user_amount_friends), color = "blue")
+
+```
+
+*Graphing users amount status by location*
+To check how much users Tweet by Location
+```{r}
+ggplot(data = BLM2020) + 
+  geom_point(mapping = aes(x = user_amount_status, y = location), color = "blue")
+```
+#Filter if parties are mentioned
+
+```{r}
+state.name[grep ("VVD", "PvdA", "PVV", "CDA", "SP", "CU", "PvdD", state.name)]
+```
+
+
+#How can we measure how many tweets are made by location?
+
+references:
+1. https://towardsdatascience.com/a-guide-to-mining-and-analysing-tweets-with-r-2f56818fdd16
+2. https://ourcodingclub.github.io/tutorials/time/
+3. https://cran.r-project.org/web/packages/stopwords/stopwords.pdf
+4. https://www.dummies.com/programming/r/how-to-search-for-individual-words-in-r/
+5. https://r4ds.had.co.nz/data-visualisation.html
+```{r}
+sum(""(BLM2020))
+sum(is.na(BLM2020$Datetime))
+sum(is.na(BLM2020$Text))
+sum(is.na(BLM2020$Tweet.Id))
+sum(is.na(BLM2020$Username))
+sum(is.na(BLM2020$Location))
+sum(is.na(BLM2020$Location))
+summary(BLM2020)
+summary(BLM2020$Location)
+```
+
+*regression retweets*
+
+```{r}
+retweets_glm <-glm(Retweet ~ ., data=BLM2020)
+```
+
+#Graphs for every variable 
+#Graph on user ammount of followers
+#Check if a user has made multiple tweets - how can we do that? 
+#Filter if parties are mentioned
