@@ -13,9 +13,8 @@ for (i in files) {
   #i['url']
   #i['target']
   
-  blm_data <- read.csv(i['url'],  sep = '\t', na.strings = c("", "NA"))
-  write.table(blm_data, paste0('../../datasets/', i['target']))
-
+  blm_data <- read.csv(i['url'], sep = '\t', na.string = c(" ", "NA"))
+  write.csv(blm_data, paste0('../../datasets/', i['target']), quote = TRUE, fileEncoding = "")
 }
 
 
