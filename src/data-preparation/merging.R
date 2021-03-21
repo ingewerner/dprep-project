@@ -9,5 +9,5 @@
 #write.csv(BLM_merged, '../../gen/data-preparation/merging.csv')
 
 BLM_merged<- rbind(blm_data)
-
-write.csv(BLM_merged, '../../gen/data-preparation/merging.csv')
+dir.create('../../gen/data-preparation/merged_data', recursive= TRUE)
+write.csv(BLM_merged, '../../gen/data-preparation/merged_data/merging.csv')
