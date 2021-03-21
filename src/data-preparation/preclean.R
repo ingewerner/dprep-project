@@ -22,11 +22,11 @@ filenames = c('../../datasets/BLM2020_dataset.csv',
 
 
 data_blm = lapply(filenames,
-                 function(fn) {
-                   fread(
-                      fn
-                   )
-                 })
+                  function(fn) {
+                      read.csv(
+                          fn, sep = ',' , na.string = c(" ", "NA")
+                      )
+                  })
 
 # Loop through all of the data
 dir.create('../../gen/data-preparation/temp', recursive= TRUE)
@@ -38,7 +38,7 @@ for (i in seq(along=data_blm)) {
     blmdata = data_blm[[i]]
     fn = filenames[i]
     extracted_filename = rev(strsplit(fn, '/')[[1]])[1]
-
+    
     
     # Get a first look of the data
     blmdata$retweeted_tweet[is.na(blmdata$retweeted_tweet)] <- 0
@@ -48,19 +48,19 @@ for (i in seq(along=data_blm)) {
     # Remove duplicates with the distinct function
     sum(duplicated(blmdata))
     blmdata %>% distinct(blmdata$tweet_id)
-   
+    
     # See the type of data of the variables
     glimpse(blmdata)
     
     # Separate the date and the time into 2 variables
     blmdata$date <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 1)
     blmdata$time <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 2)
-   
+    
     #see the class of the date
     class(blmdata$date)
     # The data is a character and needs to be converted into a date variable
     blmdata$date <- as.Date(blmdata$date, format = c("%Y-%m-%d"))
-   
+    
     # Make the Time variable readable 
     blmdata$time <- gsub(x=blmdata$time, pattern="+00:00",replacement="",fixed=T)
     
@@ -69,17 +69,17 @@ for (i in seq(along=data_blm)) {
     
     
     # remove weird characters (rendered) content tweet and user description 
-    blmdata$text <- gsub(x=blmdata$text, pattern="\r\n",replacement="", fixed = T)
-    blmdata$text <- gsub(x=blmdata$text, pattern="â€¢",replacement="", fixed = T)
-    blmdata$text <- gsub(x=blmdata$text, pattern = "â˜… ", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern= "\r\n",replacement="", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern="â�¢",replacement="", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "â�� ", replacement = "", fixed = T)
     blmdata$text <- gsub(x=blmdata$text, pattern = "ðŸ", replacement = "", fixed = T)
     blmdata$text <- gsub(x=blmdata$text, pattern = "ðŸ¤", replacement = "", fixed = T)
-    blmdata$text <- gsub(x=blmdata$text, pattern = "Ã", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "�", replacement = "", fixed = T)
     blmdata$text <- gsub(x=blmdata$text, pattern = "©", replacement = "", fixed = T)
-    blmdata$text <- gsub(x=blmdata$text, pattern = "HÃ©", replacement = "", fixed = T)
-    blmdata$text <- gsub(x=blmdata$text, pattern = "˜‰", replacement = "", fixed = T)
-    blmdata$text <- gsub(x=blmdata$text, pattern = "¤”˜‚¤£‘Š", replacement = "", fixed = T)
-    blmdata$text <- gsub(x=blmdata$text, pattern = "â€™", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "H�©", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "��", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "¤���¤£��", replacement = "", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern = "â��", replacement = "", fixed = T)
     #blmdata$rendered_content <- gsub(x=blmdata$rendered_content, pattern="\r\n",replacement="", fixed = T)
     #blmdata$rendered_content <- gsub(x=blmdata$rendered_content, pattern="â€¢",replacement="", fixed = T)
     #blmdata$rendered_content <- gsub(x=blmdata$rendered_content, pattern= "â˜… ", replacement = "", fixed = T)
@@ -89,15 +89,15 @@ for (i in seq(along=data_blm)) {
     #blmdata$rendered_content <- gsub(x=blmdata$rendered_Content, pattern= "Ã", replacement = "", fixed = T)
     #blmdata$rendered_content <- gsub(x=blmdata$rendered_Content, pattern= "©", replacement = "", fixed = T)
     blmdata$user_description <- gsub(x=blmdata$user_description, pattern="\r\n",replacement="", fixed = T)
-    blmdata$user_description <- gsub(x=blmdata$user_description, pattern="â€¢",replacement="", fixed = T)
-    blmdata$user_description<- gsub(x=blmdata$user_description, pattern= "â˜… ", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern="â�¢",replacement="", fixed = T)
+    blmdata$user_description<- gsub(x=blmdata$user_description, pattern= "â�� ", replacement = "", fixed = T)
     blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "ðŸ", replacement = "", fixed = T)
     blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "ðŸ¤", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "Ã", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "�", replacement = "", fixed = T)
     blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "©", replacement = "", fixed = T)
     blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "â", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "™", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "Œ", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "�", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "�", replacement = "", fixed = T)
     
     
     
@@ -121,4 +121,3 @@ rm(blmdata)
 
 prepared_data[[1]]
 prepared_data[[2]]
-
