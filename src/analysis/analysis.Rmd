@@ -6,10 +6,8 @@ output: html_notebook
 *Installing required packages*
 
 ```{r}
-library(rtweet)
-library(dplyr)
+library(rtweet) 
 library(tidyr)
-library(tidytext)
 library(ggplot.multistats)
 library(ggplot2)
 library(forestmangr)
@@ -22,10 +20,8 @@ library(stringr) # character manipulation
 library(tidytext)
 library(tokenizers)
 library(stopwords)
-library(tidyverse)
 library(lobstr)
 library(glue)
-library(stringr)
 
 ```
 *Loading the data*
@@ -43,8 +39,10 @@ blm2021<-read.csv('../../gen/data-preparation/temp/BLM2021_dataset.csv', sep = '
 #Retweets
 blm2020_retweets<-blm2020[blm2020$retweet > 1, ]
 blm2020_retweets
+count(blm2020_retweets)
 blm2021_retweets<-blm2021[blm2021$retweet > 1, ]
 blm2021_retweets
+count(blm2021_retweets)
 
 ```
 
@@ -52,8 +50,10 @@ blm2021_retweets
 #Likes
 blm2020_likes<-blm2020[blm2020$like >1, ]
 blm2020_likes
+count(blm2020_likes)
 blm2021_likes<-blm2021[blm2021$like >1, ]
 blm2021_likes
+count(blm2021_likes)
 
 ```
 
@@ -62,19 +62,26 @@ blm2021_likes
 #Replies
 blm2020_replies<-blm2020[blm2020$reply >1, ]
 blm2020_replies
+count(blm2020_replies)
 blm2021_replies<-blm2021[blm2021$reply >1, ]
 blm2021_replies
+count(blm2021_replies)
 
 ```
 *Creating a data frame*
 
 ```{r}
 
-data2020<-data.frame(category=c("Retweets", "Likes", "Replies"), count=c(2, 5, 3))
-data2020
-data2021<-data.frame(category=c("Retweets", "Likes", "Replies"), count=c(707, 1738, 574))
-data2021
+RLRdata2020<-data.frame(category=c("Retweets", "Likes", "Replies"), count=c(2, 5, 3))
+RLRdata2020
+RLRdata2021<-data.frame(category=c("Retweets", "Likes", "Replies"), count=c(707, 1738, 574))
+RLRdata2021
+
+# Maybe show results here as percentage of the total data? Makes more sense maybe since
+# 2021 has more datapoints. This function:
+# precentageRLR2020 <- RLRdata2020/blm2020 
 ```
+
 
 *Visualizing the data 2020*
 
@@ -332,7 +339,7 @@ state.name[grep ("VVD", "PvdA", "PVV", "CDA", "SP", "CU", "PvdD", state.name)]
 ```
 
 ```{r}
-#remive dollar signs
+#remove dollar signs #better to do this in cleaning? 
 
 blm2020<-gsub("\\$", "", blm2020)
 blm2021<-gsub("\\$","", blm2021)
@@ -380,7 +387,7 @@ blm2021$sentiment<-get_sentiment(blm2021$text)
 
 ```
 
-Now we will perform an ANOVA with DV the sentiment of the text and control variablw the source of the tweet
+Now we will perform an ANOVA with DV the sentiment of the text and control variable the source of the tweet
 
 https://www.scribbr.com/statistics/anova-in-r/
 
