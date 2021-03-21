@@ -23,8 +23,8 @@ filenames = c('../../datasets/BLM2020_dataset.csv',
 
 data_blm = lapply(filenames,
                  function(fn) {
-                   fread(
-                      fn
+                   read.csv(
+                      fn, sep = ',' , na.string = c(" ", "NA")
                    )
                  })
 
@@ -69,7 +69,7 @@ for (i in seq(along=data_blm)) {
     
     
     # remove weird characters (rendered) content tweet and user description 
-    blmdata$text <- gsub(x=blmdata$text, pattern="\r\n",replacement="", fixed = T)
+    blmdata$text <- gsub(x=blmdata$text, pattern= "\r\n",replacement="", fixed = T)
     blmdata$text <- gsub(x=blmdata$text, pattern="â€¢",replacement="", fixed = T)
     blmdata$text <- gsub(x=blmdata$text, pattern = "â˜… ", replacement = "", fixed = T)
     blmdata$text <- gsub(x=blmdata$text, pattern = "ðŸ", replacement = "", fixed = T)
@@ -80,6 +80,10 @@ for (i in seq(along=data_blm)) {
     blmdata$text <- gsub(x=blmdata$text, pattern = "˜‰", replacement = "", fixed = T)
     blmdata$text <- gsub(x=blmdata$text, pattern = "¤”˜‚¤£‘Š", replacement = "", fixed = T)
     blmdata$text <- gsub(x=blmdata$text, pattern = "â€™", replacement = "", fixed = T)
+    blmdata$text <- gsub("@\\S*", "", blmdata$text) 
+    blmdata$text <- gsub("amp", "", blmdata$text) 
+    blmdata$text <- gsub("[\r\n]", "",blmdata$text)
+    blmdata$text <- gsub("[[:punct:]]", "", blmdata$text)
     #blmdata$rendered_content <- gsub(x=blmdata$rendered_content, pattern="\r\n",replacement="", fixed = T)
     #blmdata$rendered_content <- gsub(x=blmdata$rendered_content, pattern="â€¢",replacement="", fixed = T)
     #blmdata$rendered_content <- gsub(x=blmdata$rendered_content, pattern= "â˜… ", replacement = "", fixed = T)
