@@ -14,6 +14,7 @@ for (i in files) {
   #i['target']
   
   blm_data <- read.csv(i['url'], sep = '\t', na.string = c(" ", "NA"))
+  dir.create('../../datasets', recursive= TRUE)
   write.csv(blm_data, paste0('../../datasets/', i['target']), quote = TRUE, fileEncoding = "")
 }
 

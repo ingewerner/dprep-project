@@ -461,10 +461,34 @@ blm2020$source_tweet<- replace_html(blm2020$source_tweet)
 
 one.way <- aov(source_tweet ~ ., data = blm2020)
 
+# See whether there are more likes to a tweet when a user has more followers
+ANOVAlikes <- aov(like ~ user_amount_followers, data = BLM_merged)
+summary(one.way)
+
+# See whether there are more retweets to a tweet when a user has more followers
+ANOVAretweets <- aov(retweet ~ user_amount_followers, data = BLM_merged)
+summary(one.way)
+
+# See whether sentimentscores differ with the year they are tweeted in
+one.way <- aov(sentimentscores ~ year_tweeted, data = BLM_merged)
+summary(one.way)
+
+# See whether likes and retweets have an impact on followers of the user
+two.way <- aov(user_amount_followers ~ like*retweet, data = BLM_merged)
+summary(two.way)
+
+#how to make this one? Effect of sentiment and the year on the amount of tweets
+two_ANOVA <- aov(amount of tweets ~ sentiment*year_tweeted, data = BLM_merged)
+summary(two.way)
+
 ```
 
 
 #Graphs for every variable 
 #Graph on user ammount of followers
-#Check if a user has made multiple tweets - how can we do that? 
+#Check if a user has made multiple tweets - how can we do that?
+#We have to filter on user_id for this, user_id has a lot of e+, I made new variables within the data at the preclean stage
+sum(duplicated(blmdata$user_id_full)) #to see if there are duplicates? 
+unique(blmdata$user_id_full, incomparables = FALSE)
+
 #Filter if parties are mentioned
