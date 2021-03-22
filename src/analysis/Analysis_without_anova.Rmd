@@ -12,13 +12,13 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
   title: "BLM data analysis"
 output: html_notebook
 ---
-  
-  
 ```
+
+
 *Installing required packages*
 
 ```{r}
-```{r}
+
 library(rtweet) 
 library(tidyr)
 library(ggplot.multistats)
@@ -47,6 +47,10 @@ blm_merged<-read.csv('../../gen/data-preparation/merging.csv', sep = ',', na.str
 
 * set everything right * 
 ```{r}
+
+# remove first column 
+blm_merged <- subset(blm_merged, select = -X)
+
 # set user_created_date as date
 blm_merged$user_created_date <- as.Date(blm_merged$user_created_date, format = c("%Y-%m-%d"))
 
@@ -72,14 +76,20 @@ blm_merged$retweeted_tweet <- as.integer(blm_merged$retweeted_tweet, na.strings 
 ```{r}
 #Retweet
 
-
-RLR <- function(year){
-  for (i in year){ 
-    retweet <- (sum(blm_merged[blm_merged$year == year,]$retweet, na.rm = T))
-    like <- (sum(blm_merged[blm_merged$year == year,]$like, na.rm = T))
-    reply <- (sum(blm_merged[blm_merged$year == year,]$reply, na.rm = T))
-  } 
-  RLRdata <- data.frame(category=c("Retweet", "Like", "Reply"), count = c(retweet, like, reply))
+RLR <- function(year, retweet, like, reply) {
+  for (i in year) {
+    retweet <-
+      (sum(blm_merged[blm_merged$year == year, ]$retweet, na.rm = T))
+    like <-
+      (sum(blm_merged[blm_merged$year == year, ]$like, na.rm = T))
+    reply <-
+      (sum(blm_merged[blm_merged$year == year, ]$reply, na.rm = T))
+  }
+  RLRdata <-
+    data.frame(
+      category = c("retweet", "Like", "Reply"),
+      count = c(retweet, like, reply)
+    )
   return(RLRdata)
 }
 
