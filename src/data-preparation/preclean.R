@@ -39,10 +39,12 @@ for (i in seq(along=data_blm)) {
     fn = filenames[i]
     extracted_filename = rev(strsplit(fn, '/')[[1]])[1]
     
-    
-    # Get a first look of the data
+    # Set the NA's right
     blmdata$retweeted_tweet[is.na(blmdata$retweeted_tweet)] <- 0
     blmdata$quoted_tweet[is.na(blmdata$quoted_tweet)] <- "No"
+    blmdata$location <- replace(blmdata$location, blmdata$location == "", NA)
+    blmdata$user_description <- replace(blmdata$user_description, blmdata$user_description == "", NA)
+    blmdata$quoted_tweet <- replace(blmdata$quoted_tweet, blmdata$quoted_tweet == "", NA)
     
     
     # Remove duplicates with the distinct function
@@ -52,22 +54,35 @@ for (i in seq(along=data_blm)) {
     # See the type of data of the variables
     glimpse(blmdata)
     
+    # TO DO: and also can you look at the rendered_tweet and removing the weird characters?
+    
     # Separate the date and the time into 2 variables
     blmdata$date <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 1)
     blmdata$time <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 2)
-    
     #see the class of the date
     class(blmdata$date)
     # The data is a character and needs to be converted into a date variable
     blmdata$date <- as.Date(blmdata$date, format = c("%Y-%m-%d"))
-    
-    # Make the Time variable readable 
     blmdata$time <- gsub(x=blmdata$time, pattern="+00:00",replacement="",fixed=T)
+    # Extract the year and make a variable
+    blmdata$year_tweeted <- substring(blmdata$date,1,4)
+    
+    # Separate the date and the time of user creation into 2 variables
+    blmdata$user_created_date <- sapply(strsplit(as.character(blmdata$user_created), " "), "[", 1)
+    blmdata$user_created_time <- sapply(strsplit(as.character(blmdata$user_created), " "), "[", 2)
+    # The data is a character and needs to be converted into a date variable
+    blmdata$user_created_date <- as.Date(blmdata$user_created_date, format = c("%Y-%m-%d"))
+    # Make the time of user creation readable 
+    blmdata$user_created_time <- gsub(x=blmdata$user_created_time, pattern="+00:00",replacement="",fixed=T)
+    # Extract the year and make it into a variable
+    blmdata$year_created <- substring(blmdata$user_created_date,1,4)
     
     # Remove the Datetime variable and create a new dataframe
-    blmdata = subset(blmdata, select = -c(datetime))
+    blmdata = subset(blmdata, select = -c(datetime, user_created))
     
-    
+    # Make sure that the other variables are measured correctly
+    blmdata$retweeted_tweet <- as.integer(blmdata$retweeted_tweet)
+
     # remove weird characters (rendered) content tweet and user description 
     blmdata$text <- gsub(x=blmdata$text, pattern= "\r\n",replacement="", fixed = T)
     blmdata$text <- gsub(x=blmdata$text, pattern="Ã¢â¬Â¢",replacement="", fixed = T)
@@ -100,7 +115,6 @@ for (i in seq(along=data_blm)) {
     blmdata$user_description <- gsub(x=blmdata$user_description, pattern= "Å", replacement = "", fixed = T)
     
     
-    
     # clean source attribute to useful
     html_tags <- c(
         "<bold>Random</bold> text with symbols: &nbsp; &lt; &gt; &amp; &quot; &apos;",
@@ -108,7 +122,6 @@ for (i in seq(along=data_blm)) {
     )
     
     blmdata$source_tweet<- replace_html(blmdata$source_tweet)
-    
     
     prepared_data[[i]] <- blmdata
     
