@@ -9,7 +9,7 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 
 ```{r}
 ---
-  title: "BLM data analysis"
+title: "BLM data analysis"
 output: html_notebook
 ---
 ```
@@ -42,14 +42,13 @@ library(glue)
 ```{r}
 blm_merged<-read.csv('../../gen/data-preparation/merging.csv', sep = ',', na.strings=c("", "NA"))
 
-#blm2021<-read.csv('../../gen/data-preparation/temp/BLM2021_dataset.csv', sep = '', na.strings=c("", "NA"))
 ```
 
 * set everything right * 
 ```{r}
 
 # remove first column 
-blm_merged <- subset(blm_merged, select = -X)
+blm_merged <- subset(blm_merged, select = -row.names)
 
 # set user_created_date as date
 blm_merged$user_created_date <- as.Date(blm_merged$user_created_date, format = c("%Y-%m-%d"))
@@ -58,13 +57,7 @@ blm_merged$user_created_date <- as.Date(blm_merged$user_created_date, format = c
 blm_merged$date <- as.Date(blm_merged$date)
 
 # set variables with counting numbers into integers
-blm_merged$user_amount_followers <- as.integer(blm_merged$user_amount_followers, na.strings = "NA")
-blm_merged$user_amount_friends <- as.integer(blm_merged$user_amount_friends, na.strings = "NA")
-blm_merged$user_amount_status <- as.integer(blm_merged$user_amount_status, na.strings = "NA")
-blm_merged$user_listed_count <- as.integer(blm_merged$user_listed_count, na.strings = "NA")
-blm_merged$user_media_count <- as.integer(blm_merged$user_media_count, na.strings = "NA")
-blm_merged$quote_count <- as.integer(blm_merged$quote_count, na.strings = "NA")
-blm_merged$retweeted_tweet <- as.integer(blm_merged$retweeted_tweet, na.strings = "NA")
+# blm_merged$reply <- as.integer(blm_merged$reply)
 
 
 
@@ -76,27 +69,19 @@ blm_merged$retweeted_tweet <- as.integer(blm_merged$retweeted_tweet, na.strings 
 ```{r}
 #Retweet
 
-RLR <- function(year, retweet, like, reply) {
-  for (i in year) {
-    retweet <-
-      (sum(blm_merged[blm_merged$year == year, ]$retweet, na.rm = T))
-    like <-
-      (sum(blm_merged[blm_merged$year == year, ]$like, na.rm = T))
-    reply <-
-      (sum(blm_merged[blm_merged$year == year, ]$reply, na.rm = T))
-  }
-  RLRdata <-
-    data.frame(
-      category = c("retweet", "Like", "Reply"),
-      count = c(retweet, like, reply)
-    )
+RLR <- function(year){
+    for (i in year){ 
+      retweet <- (sum(blm_merged[blm_merged$year == year,]$retweet, na.rm = T))
+      like <- (sum(blm_merged[blm_merged$year == year,]$like, na.rm = T))
+      reply <- (sum(blm_merged[blm_merged$year == year,]$reply, na.rm = T))
+    } 
+  RLRdata <- data.frame(category=c("Retweet", "Like", "Reply"), count = c(retweet, like, reply))
   return(RLRdata)
 }
 
 RLRdata2020 <- RLR(2020)
 RLRdata2020
 RLRdata2021 <- RLR(2021)
-RLRdata2021
 
 ```
 
@@ -179,19 +164,22 @@ For 2021 the most frequent word is blm (the abbreviation of blacklivesmatter), a
 
 ```{r}
 #making a histogram
-histogram_tweets <- function(year){
+
+histogram_tweets <- function(year) {
   tweets(year) %>% # gives you a bar chart of the most frequent words found in the tweets
-  count(word, sort = TRUE) %>%
-  top_n(15) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(x = word, y = n)) +
-  geom_col() +
-  xlab(NULL) +
-  coord_flip() +
-  labs(y = "Count",
+    count(word, sort = TRUE) %>%
+    top_n(15) %>%
+    mutate(word = reorder(word, n)) %>%
+    ggplot(aes(x = word, y = n)) +
+    geom_col() +
+    xlab(NULL) +
+    coord_flip() +
+    labs(
+      y = "Count",
       x = "Unique words",
       title = "Most frequent words found in the tweets of #BLM",
-      subtitle = "Stop words removed from the list")
+      subtitle = "Stop words removed from the list"
+    )
 }
 
 histogram_tweets(2020)
@@ -201,12 +189,12 @@ histogram_tweets(2021)
 
 *Sentiment analysis for positive or negative tweets 2020*
 
-To see the nature of the tweets we can make a sentiment analysis. We do that for both years again and see that in 2020 the positivity scores the highest. In 2021 we however see that the sentiment scores the highest in negative. That's a noticable difference!
+To see the nature of the tweets we can make a sentiment analysis. We do that for both years again and see that in 2020 the negativity and positivity scores the highest. In 2021 we however see that the difference in sentiment scores is a bit bigger now: it's more negative. That's a noticable difference!
 
 ```{r}
 
 sentiment <- function(year){ 
-  tweets_sentiment <- iconv(tweets(year), from="UTF-8", to="ASCII", sub="")# Converting tweets to ASCII to trackle strange characters
+  tweets_sentiment <- iconv(tweets(year), from="UTF-8", to="ASCII", sub="")# Converting tweets to ASCII to        trackle strange characters
   
   # removing retweets, in case needed 
   tweets_sentiment <-gsub("(RT|via)((?:\\b\\w*@\\w+)+)","",tweets_sentiment)
@@ -224,7 +212,7 @@ sentiment <- function(year){
     geom_bar(aes(fill=sentiment),stat = "identity")+
     theme(legend.position="none")+
     xlab("Sentiments")+ylab("Scores")+
-    ggtitle("Total sentiment based on scores 2020")+
+    ggtitle("Total sentiment based on scores" )+
     theme_minimal()
   
 }

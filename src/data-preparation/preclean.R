@@ -12,8 +12,6 @@ library(dplyr)
 library(tidyr)
 library(textclean)
 library("textclean")
-# install.packages(pandas)
-# library(pandas)
 
 # download data 
 
@@ -55,29 +53,21 @@ for (i in seq(along=data_blm)) {
     # See the type of data of the variables
     glimpse(blmdata)
     
-    # Separate the date and the time into 2 variables
+    # The data is a character and needs to be converted into a date variable
     blmdata$date <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 1)
     blmdata$time <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 2)
-    #see the class of the date
-    class(blmdata$date)
-    # The data is a character and needs to be converted into a date variable
     blmdata$date <- as.Date(blmdata$date, format = c("%Y-%m-%d"))
     blmdata$time <- gsub(x=blmdata$time, pattern="+00:00",replacement="",fixed=T)
-    # Extract the year and make a variable
-    blmdata$year_tweeted <- substring(blmdata$date,1,4)
+   
     
-    # Separate the date and the time of user creation into 2 variables
+    # The data is a character and needs to be converted into a date variable
     blmdata$user_created_date <- sapply(strsplit(as.character(blmdata$user_created), " "), "[", 1)
     blmdata$user_created_time <- sapply(strsplit(as.character(blmdata$user_created), " "), "[", 2)
-    # The data is a character and needs to be converted into a date variable
     blmdata$user_created_date <- as.Date(blmdata$user_created_date, format = c("%Y-%m-%d"))
-    # Make the time of user creation readable 
     blmdata$user_created_time <- gsub(x=blmdata$user_created_time, pattern="+00:00",replacement="",fixed=T)
-    # Extract the year and make it into a variable
-    blmdata$year_created <- substring(blmdata$user_created_date,1,4)
     
-    # Remove the Datetime variable and create a new dataframe
-    blmdata = subset(blmdata, select = -c(datetime, user_created))
+    # remove datetime variable
+    blmdata <- subset(blmdata, select = -datetime)
     
     # Make sure that the other variables are measured correctly
     blmdata$retweeted_tweet <- as.integer(blmdata$retweeted_tweet)
