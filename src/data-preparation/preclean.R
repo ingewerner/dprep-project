@@ -107,8 +107,13 @@ for (i in seq(along=data_blm)) {
     blmdata$text <- gsub(blmdata$text, pattern = "o;", replacement = "&", fixed = T)
     blmdata$text <- gsub(blmdata$text, pattern = "®", replacement = "&", fixed = T)
     blmdata$text <- gsub(blmdata$text, pattern = "â", replacement = "&", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "???", replacement = "&", fixed = T)
-
+    blmdata$text <- gsub(blmdata$text, pattern = "Y", replacement = "&", fixed = T)
+    blmdata$text <- gsub(blmdata$text, pattern = "~", replacement = "&", fixed = T)
+    blmdata$text <- gsub(blmdata$text, pattern = "o", replacement = "&", fixed = T)
+    blmdata$text <- gsub(blmdata$text, pattern = "½", replacement = "&", fixed = T)
+    blmdata$text <- gsub(blmdata$text, pattern = "T", replacement = "&", fixed = T)
+    blmdata$text <- gsub(blmdata$text, pattern = "^", replacement = "&", fixed = T)
+    
     blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "\r\n", replacement = "", fixed = T)
     blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "©", replacement = "", fixed = T)
     blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "¦", replacement = "", fixed = T)
@@ -134,7 +139,12 @@ for (i in seq(along=data_blm)) {
     blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "o", replacement = "", fixed = T)
     blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "®", replacement = "", fixed = T)
     blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "â", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "???", replacement = "", fixed = T)
+    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "Y", replacement = "&", fixed = T)
+    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "~", replacement = "", fixed = T)
+    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "o", replacement = "", fixed = T)
+    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "½", replacement = "", fixed = T)
+    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "T", replacement = "", fixed = T)
+    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "^", replacement = "", fixed = T)
     
     blmdata$user_description <- gsub(blmdata$user_description, pattern = "\r\n", replacement = "", fixed = T)
     blmdata$user_description <- gsub(blmdata$user_description, pattern = "©", replacement= "", fixed = T)
@@ -161,8 +171,13 @@ for (i in seq(along=data_blm)) {
     blmdata$user_description <- gsub(blmdata$user_description, pattern = "o", replacement = "", fixed = T)
     blmdata$user_description <- gsub(blmdata$user_description, pattern = "®", replacement = "", fixed = T)
     blmdata$user_description <- gsub(blmdata$user_description, pattern = "â", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "???", replacement = "", fixed = T)
-    
+    blmdata$user_description <- gsub(blmdata$user_description, pattern = "Y", replacement = "&", fixed = T)
+    blmdata$user_description <- gsub(blmdata$user_description, pattern = "~", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(blmdata$user_description, pattern = "o", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(blmdata$user_description, pattern = "½", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(blmdata$user_description, pattern = "T", replacement = "", fixed = T)
+    blmdata$user_description <- gsub(blmdata$user_description, pattern = "^", replacement = "", fixed = T)
+       
     #replace data that is retreived the wrong way
     replace_contraction(blmdata$rendered_content)
     replace_emoticon(blmdata$redered_content)
