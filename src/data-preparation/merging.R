@@ -8,7 +8,7 @@ blm_merged<- rbind(blm2020, blm2021)
 
 ##  ----------------------cleaning merged data; remove first column, set date as.Date and add column with year --------------------------- ##
 
-<<<<<<< HEAD
+
 # remove first column
 blm_merged <- subset(blm_merged, select = -X)
 
@@ -36,8 +36,4 @@ blm_merged$year <- format(blm_merged$data, format = "%Y")
 ## --------------- end cleaning: write over in csv file -------------------## 
 
 write.csv(blm_merged, '../../gen/data-preparation/merging.csv')
-=======
-BLM_merged<- rbind(blm_data)
-dir.create('../../gen/data-preparation/merged_data', recursive= TRUE)
-write.csv(BLM_merged, '../../gen/data-preparation/merged_data/merging.csv')
->>>>>>> c0cc08a33b6ef532be0006d27178c6f4c7d639f2
+
