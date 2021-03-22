@@ -1,7 +1,10 @@
 # load cleaned data
 
-blm2020<-read.csv('../../gen/data-preparation/temp/BLM2020_dataset.csv', sep = '', na.strings=c("", "NA"))
-blm2021<-read.csv('../../gen/data-preparation/temp/BLM2021_dataset.csv', sep = '', na.strings=c("", "NA"))
+library(plyr)
+library(dplyr)
+
+blm2020<-read.csv('../../gen/data-preparation/temp/BLM2020_dataset.csv', sep = '', na.strings=c("", "NA"), row.names=NULL)
+blm2021<-read.csv('../../gen/data-preparation/temp/BLM2021_dataset.csv', sep = '', na.strings=c("", "NA"), row.names=NULL)
 
 # merge data
 blm_merged<- rbind(blm2020, blm2021)
@@ -19,16 +22,16 @@ blm_merged$user_created_time <- sapply(strsplit(as.character(blm_merged$user_cre
 blm_merged$user_created <- as.Date(blm_merged$user_created, format = c("%Y-%m-%d"))
 
 # Set date into as.Date
-blm_merged$data <- as.Date(blm_merged$date)
+blm_merged$date <- as.Date(blm_merged$date)
 
 # set variables with counting numbers into integers
-blm_merged$user_amount_followers <- as.integer(blm_merged$user_amount_followers)
-blm_merged$user_amount_friends <- as.integer(blm_merged$user_amount_friends)
-blm_merged$user_amount_status <- as.integer(blm_merged$user_amount_status)
-blm_merged$user_listed_count <- as.integer(blm_merged$user_listed_count)
-blm_merged$user_media_count <- as.integer(blm_merged$user_media_count)
-blm_merged$quote_count <- as.integer(blm_merged$quote_count)
-blm_merged$retweeted_tweet <- as.integer(blm_merged$retweeted_tweet)
+blm_merged$user_amount_followers <- as.integer(blm_merged$user_amount_followers, na.strings = "NA")
+blm_merged$user_amount_friends <- as.integer(blm_merged$user_amount_friends, na.strings = "NA")
+blm_merged$user_amount_status <- as.integer(blm_merged$user_amount_status, na.strings = "NA")
+blm_merged$user_listed_count <- as.integer(blm_merged$user_listed_count, na.strings = "NA")
+blm_merged$user_media_count <- as.integer(blm_merged$user_media_count, na.strings = "NA")
+blm_merged$quote_count <- as.integer(blm_merged$quote_count, na.strings = "NA")
+blm_merged$retweeted_tweet <- as.integer(blm_merged$retweeted_tweet, na.strings = "NA")
 
 # add column with year of tweets
 blm_merged$year <- format(blm_merged$data, format = "%Y")
@@ -36,4 +39,3 @@ blm_merged$year <- format(blm_merged$data, format = "%Y")
 ## --------------- end cleaning: write over in csv file -------------------## 
 
 write.csv(blm_merged, '../../gen/data-preparation/merging.csv')
-

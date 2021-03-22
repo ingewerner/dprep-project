@@ -9,12 +9,15 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 
 ```{r}
 ---
-title: "BLM data analysis"
+  title: "BLM data analysis"
 output: html_notebook
 ---
-
+  
+  
+```
 *Installing required packages*
 
+```{r}
 ```{r}
 library(rtweet) 
 library(tidyr)
@@ -42,18 +45,40 @@ blm_merged<-read.csv('../../gen/data-preparation/merging.csv', sep = ',', na.str
 #blm2021<-read.csv('../../gen/data-preparation/temp/BLM2021_dataset.csv', sep = '', na.strings=c("", "NA"))
 ```
 
+* set everything right * 
+```{r}
+# set user_created_date as date
+blm_merged$user_created_date <- as.Date(blm_merged$user_created_date, format = c("%Y-%m-%d"))
+
+# Set date into as.Date
+blm_merged$date <- as.Date(blm_merged$date)
+
+# set variables with counting numbers into integers
+blm_merged$user_amount_followers <- as.integer(blm_merged$user_amount_followers, na.strings = "NA")
+blm_merged$user_amount_friends <- as.integer(blm_merged$user_amount_friends, na.strings = "NA")
+blm_merged$user_amount_status <- as.integer(blm_merged$user_amount_status, na.strings = "NA")
+blm_merged$user_listed_count <- as.integer(blm_merged$user_listed_count, na.strings = "NA")
+blm_merged$user_media_count <- as.integer(blm_merged$user_media_count, na.strings = "NA")
+blm_merged$quote_count <- as.integer(blm_merged$quote_count, na.strings = "NA")
+blm_merged$retweeted_tweet <- as.integer(blm_merged$retweeted_tweet, na.strings = "NA")
+
+
+
+
+```
 
 *Making dataframe with amount of retweets, likes and replies*
 
 ```{r}
 #Retweet
 
+
 RLR <- function(year){
-    for (i in year){ 
-      retweet <- (sum(blm_merged[blm_merged$year == year,]$retweet, na.rm = T))
-      like <- (sum(blm_merged[blm_merged$year == year,]$like, na.rm = T))
-      reply <- (sum(blm_merged[blm_merged$year == year,]$reply, na.rm = T))
-    } 
+  for (i in year){ 
+    retweet <- (sum(blm_merged[blm_merged$year == year,]$retweet, na.rm = T))
+    like <- (sum(blm_merged[blm_merged$year == year,]$like, na.rm = T))
+    reply <- (sum(blm_merged[blm_merged$year == year,]$reply, na.rm = T))
+  } 
   RLRdata <- data.frame(category=c("Retweet", "Like", "Reply"), count = c(retweet, like, reply))
   return(RLRdata)
 }
@@ -131,10 +156,10 @@ First, we want to remove stop words like "so" and "at" for counting the most fre
 ```{r}
 tweets <- function(year){ 
   tweets <- blm_merged[blm_merged$year == year,] %>%
-  select(text) %>%
-  unnest_tokens(word, text)
-tweets <- tweets %>%
-  anti_join(get_stopwords(language = "nl", source = "snowball"))
+    select(text) %>%
+    unnest_tokens(word, text)
+  tweets <- tweets %>%
+    anti_join(get_stopwords(language = "nl", source = "snowball"))
 }
 tweets(2020)
 tweets(2021)
@@ -154,9 +179,9 @@ histogram_tweets <- function(year){
   xlab(NULL) +
   coord_flip() +
   labs(y = "Count",
-       x = "Unique words",
-       title = "Most frequent words found in the tweets of #BLM",
-       subtitle = "Stop words removed from the list")
+      x = "Unique words",
+      title = "Most frequent words found in the tweets of #BLM",
+      subtitle = "Stop words removed from the list")
 }
 
 histogram_tweets(2020)
@@ -172,10 +197,10 @@ To see the nature of the tweets we can make a sentiment analysis. We do that for
 
 sentiment <- function(year){ 
   tweets_sentiment <- iconv(tweets(year), from="UTF-8", to="ASCII", sub="")# Converting tweets to ASCII to trackle strange characters
-
+  
   # removing retweets, in case needed 
   tweets_sentiment <-gsub("(RT|via)((?:\\b\\w*@\\w+)+)","",tweets_sentiment)
-
+  
   # removing mentions, in case needed
   tweets_sentiment <-gsub("@\\w+","",tweets_sentiment)
   ew_sentiment<-get_nrc_sentiment((tweets_sentiment))
@@ -192,7 +217,7 @@ sentiment <- function(year){
     ggtitle("Total sentiment based on scores 2020")+
     theme_minimal()
   
-  }
+}
 sentiment(2020)
 sentiment(2021)
 
@@ -206,8 +231,8 @@ We now want to visualize retweets by location.
 ```{r}
 retweet_location <- function(year){ 
   ggplot(data = blm_merged[blm_merged$year == year,]) + 
-  geom_point(mapping = aes(x = retweet, y = location))
-  }
+    geom_point(mapping = aes(x = retweet, y = location))
+}
 retweet_location(2020)
 retweet_location(2021)
 ```
@@ -217,7 +242,7 @@ We now want to visualize the retweet by date for both years.
 ```{r}
 retweet_date <- function(year){ 
   ggplot(data = blm_merged[blm_merged$year == year,]) + 
-  geom_point(mapping = aes(x = retweet, y = date), color = "blue")
+    geom_point(mapping = aes(x = retweet, y = date), color = "blue")
 }
 
 retweet_date(2020)
@@ -230,7 +255,7 @@ We also want to visualize the relationship between the amount of followers and t
 ```{r}
 followers_friends <- function(year){ 
   ggplot(data = blm_merged[blm_merged$year == year,]) + 
-  geom_point(mapping = aes(x = user_amount_followers, y = user_amount_friends), color = "blue")
+    geom_point(mapping = aes(x = user_amount_followers, y = user_amount_friends), color = "blue")
 }
 
 followers_friends(2020)
@@ -242,7 +267,7 @@ followers_friends(2021)
 ```{r}
 status_location <- function(year){ 
   ggplot(data = blm_merged[blm_merged$year == year,]) + 
-  geom_point(mapping = aes(x = user_amount_status, y = location), color = "blue")
+    geom_point(mapping = aes(x = user_amount_status, y = location), color = "blue")
 }
 
 status_location(2020)
