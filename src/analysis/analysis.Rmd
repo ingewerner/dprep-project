@@ -336,6 +336,8 @@ ggplot(data = blm2021) +
 
 ```{r}
 state.name[grep ("VVD", "PvdA", "PVV", "CDA", "SP", "CU", "PvdD", state.name)]
+
+# add "BIJ1" and "D66" -> I did see some tweets containing these. 
 ```
 
 ```{r}
