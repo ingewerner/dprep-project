@@ -48,19 +48,13 @@ blm_merged<-read.csv('../../gen/data-preparation/merging.csv', sep = ',', na.str
 ```{r}
 
 # remove first column 
-blm_merged <- subset(blm_merged, select = -row.names)
+blm_merged <- subset(blm_merged, select = -X)
 
 # set user_created_date as date
 blm_merged$user_created_date <- as.Date(blm_merged$user_created_date, format = c("%Y-%m-%d"))
 
 # Set date into as.Date
 blm_merged$date <- as.Date(blm_merged$date)
-
-# set variables with counting numbers into integers
-# blm_merged$reply <- as.integer(blm_merged$reply)
-
-
-
 
 ```
 
