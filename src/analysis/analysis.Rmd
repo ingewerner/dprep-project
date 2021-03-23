@@ -1,11 +1,17 @@
 ---
-title: "BLM data analysis"
+title: "R Notebook"
 output: html_notebook
 ---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
 
 *Installing required packages*
 
 ```{r}
+
 library(rtweet) 
 library(tidyr)
 library(ggplot.multistats)
@@ -27,274 +33,230 @@ library(glue)
 *Loading the data*
 
 ```{r}
-blm2020<-read.csv('../../gen/data-preparation/temp/BLM2020_dataset.csv', sep = ' ', na.strings=c("", "NA"))
-
-blm2021<-read.csv('../../gen/data-preparation/temp/BLM2021_dataset.csv', sep = '', na.strings=c("", "NA"))
-```
-
-
-*Show the ratio of replies, retweets and likes*
-
-```{r}
-#Retweets
-blm2020_retweets<-blm2020[blm2020$retweet > 1, ]
-blm2020_retweets
-count(blm2020_retweets)
-blm2021_retweets<-blm2021[blm2021$retweet > 1, ]
-blm2021_retweets
-count(blm2021_retweets)
+blm_merged<-read.csv('../../gen/data-preparation/merging.csv', sep = ',', na.strings=c("", "NA"))
 
 ```
 
+* set everything right * 
 ```{r}
-#Likes
-blm2020_likes<-blm2020[blm2020$like >1, ]
-blm2020_likes
-count(blm2020_likes)
-blm2021_likes<-blm2021[blm2021$like >1, ]
-blm2021_likes
-count(blm2021_likes)
+
+# remove first column 
+blm_merged <- subset(blm_merged, select = -X)
+
+# set user_created_date as date
+blm_merged$user_created_date <- as.Date(blm_merged$user_created_date, format = c("%Y-%m-%d"))
+
+# Set date into as.Date
+blm_merged$date <- as.Date(blm_merged$date)
 
 ```
 
+*Making dataframe with amount of retweets, likes and replies*
 
 ```{r}
-#Replies
-blm2020_replies<-blm2020[blm2020$reply >1, ]
-blm2020_replies
-count(blm2020_replies)
-blm2021_replies<-blm2021[blm2021$reply >1, ]
-blm2021_replies
-count(blm2021_replies)
+#Retweet
 
-```
-*Creating a data frame*
+RLR <- function(year){
+    for (i in year){ 
+      retweet <- (sum(blm_merged[blm_merged$year == year,]$retweet, na.rm = T))
+      like <- (sum(blm_merged[blm_merged$year == year,]$like, na.rm = T))
+      reply <- (sum(blm_merged[blm_merged$year == year,]$reply, na.rm = T))
+    } 
+  RLRdata <- data.frame(category=c("Retweet", "Like", "Reply"), count = c(retweet, like, reply))
+  return(RLRdata)
+}
 
-```{r}
-
-RLRdata2020<-data.frame(category=c("Retweets", "Likes", "Replies"), count=c(2, 5, 3))
+RLRdata2020 <- RLR(2020)
 RLRdata2020
-RLRdata2021<-data.frame(category=c("Retweets", "Likes", "Replies"), count=c(707, 1738, 574))
-RLRdata2021
+RLRdata2021 <- RLR(2021)
 
-# Maybe show results here as percentage of the total data? Makes more sense maybe since
-# 2021 has more datapoints. This function:
-# precentageRLR2020 <- RLRdata2020/blm2020 
 ```
+
+
 
 
 *Visualizing the data 2020*
 
 ```{r}
 #Adding columns
-data2020$fraction = data2020$count / sum(data2020$count)
-data2020$percentage = data2020$count / sum(data2020$count) * 100
-data2020$ymax = cumsum(data2020$fraction)
-data2020$ymin = c(0, head(data2020$ymax, n=-1))
+
+RLRdata2020$fraction = RLRdata2020$count / sum(RLRdata2020$count)
+RLRdata2020$percentage = RLRdata2020$count / sum(RLRdata2020$count) * 100
+RLRdata2020$ymax = cumsum(RLRdata2020$fraction)
+RLRdata2020$ymin = c(0, head(RLRdata2020$ymax, n=-1))
 
 #Rounding up
 
-data2020 <- round_df(data2020, 2)
+RLRdata2020 <- round_df(RLRdata2020, 2)
 
 # Specify what the legend should say
-Type_of_Tweet <- paste(data2020$category, data2020$percentage, "%")
+Type_of_Tweet <- paste(RLRdata2020$category, RLRdata2020$percentage, "%")
 
-ggplot(data2020, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Type_of_Tweet)) +
+ggplot(RLRdata2020, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Type_of_Tweet)) +
   geom_rect() +
   coord_polar(theta="y") + 
   xlim(c(2, 4)) +
   theme_void() +
   theme(legend.position = "right")
+
+
 
 ```
 *Visualizing the data 2021*
-
 ```{r}
-
 #Adding columns
-data2021$fraction = data2021$count / sum(data2021$count)
-data2021$percentage = data2021$count / sum(data2021$count) * 100
-data2021$ymax = cumsum(data2021$fraction)
-data2021$ymin = c(0, head(data2021$ymax, n=-1))
+
+RLRdata2021$fraction = RLRdata2021$count / sum(RLRdata2021$count)
+RLRdata2021$percentage = RLRdata2021$count / sum(RLRdata2021$count) * 100
+RLRdata2021$ymax = cumsum(RLRdata2021$fraction)
+RLRdata2021$ymin = c(0, head(RLRdata2021$ymax, n=-1))
 
 #Rounding up
 
-data2021 <- round_df(data2021, 2)
+RLRdata2021 <- round_df(RLRdata2021, 2)
 
 # Specify what the legend should say
-Type_of_Tweet <- paste(data2020$category, data2021$percentage, "%")
+Type_of_Tweet <- paste(RLRdata2021$category, RLRdata2021$percentage, "%")
 
-ggplot(data2021, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Type_of_Tweet)) +
+ggplot(RLRdata2021, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Type_of_Tweet)) +
   geom_rect() +
   coord_polar(theta="y") + 
   xlim(c(2, 4)) +
   theme_void() +
   theme(legend.position = "right")
-
 ```
 
 
 
 
-*Most frequent words in the 2020 tweets*
+*Most frequent words in the tweets*
 
 Lets see which words are more frequently used in the posts of 2020
 
-```{r}
-blm2020$text <- gsub("@\\S*", "", blm2020$text)
-blm2020$text <- gsub("amp", "", blm2020$text) 
-blm2020$text <- gsub("[\r\n]", "", blm2020$text)
-blm2020$text <- gsub("[[:punct:]]", "", blm2020$text)
-
-```
-
+First, we want to remove stop words like "so" and "at" for counting the most frequent words
 
 ```{r}
-
-#removing stop words from the text - so the most frequent words are not or at and
-
-tweets <- blm2020 %>%
-  select(text) %>%
-  unnest_tokens(word, text)
-tweets <- tweets %>%
-  anti_join(get_stopwords(language = "nl", source = "snowball"))
-
+tweets <- function(year){ 
+  tweets <- blm_merged[blm_merged$year == year,] %>%
+    select(text) %>%
+    unnest_tokens(word, text)
+  tweets <- tweets %>%
+    anti_join(get_stopwords(language = "nl", source = "snowball"))
+}
+tweets(2020)
+tweets(2021)
 ```
+We want to see which word is most used in both years seperatly. For 2020 the most frequent word is blacklivesmatter, other most used words are "blm", "zwarte", "amsterdam" and "allivesmatter". 
+For 2021 the most frequent word is blm (the abbreviation of blacklivesmatter), and other most used words are "blacklivesmatter", "antifa" and "mensen".
 
 ```{r}
 #making a histogram
-tweets %>% # gives you a bar chart of the most frequent words found in the tweets
-  count(word, sort = TRUE) %>%
-  top_n(15) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(x = word, y = n)) +
-  geom_col() +
-  xlab(NULL) +
-  coord_flip() +
-  labs(y = "Count",
-       x = "Unique words",
-       title = "Most frequent words found in the tweets of #BLM",
-       subtitle = "Stop words removed from the list")
-```
-*Most frequent words in the 2021 tweets*
-Lets now see which words are more frequently used in the posts of 2021 
 
-```{r}
-blm2021$text <- gsub("@\\S*", "", blm2021$text)
-blm2021$text <- gsub("amp", "", blm2021$text) 
-blm2021$text <- gsub("[\r\n]", "", blm2021$text)
-blm2021$text <- gsub("[[:punct:]]", "", blm2021$text)
+histogram_tweets <- function(year) {
+  tweets(year) %>% # gives you a bar chart of the most frequent words found in the tweets
+    dplyr::count(word, sort = TRUE) %>%
+    top_n(15) %>%
+    mutate(word = reorder(word, n)) %>%
+    ggplot(aes(x = word, y = n)) +
+    geom_col() +
+    xlab(NULL) +
+    coord_flip() +
+    labs(
+      y = "Count",
+      x = "Unique words",
+      title = "Most frequent words found in the tweets of #BLM",
+      subtitle = "Stop words removed from the list"
+    )
+}
 
+histogram_tweets(2020)
+histogram_tweets(2021)
 ```
 
-
-```{r}
-
-#removing stop words from the text - so the most frequent words are not or at and
-
-tweets1 <- blm2021 %>%
-  select(text) %>%
-  unnest_tokens(word, text)
-tweets1 <- tweets1 %>%
-  anti_join(get_stopwords(language = "nl", source = "snowball"))
-
-```
-
-```{r}
-#making a histogram
-tweets1 %>% # gives you a bar chart of the most frequent words found in the tweets
-  count(word, sort = TRUE) %>%
-  top_n(15) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(x = word, y = n)) +
-  geom_col() +
-  xlab(NULL) +
-  coord_flip() +
-  labs(y = "Count",
-       x = "Unique words",
-       title = "Most frequent words found in the tweets of #BLM 2021",
-       subtitle = "Stop words removed from the list")
-```
 
 *Sentiment analysis for positive or negative tweets 2020*
 
-```{r}
-# Converting tweets to ASCII to trackle strange characters
-tweets_sentiment <- iconv(tweets, from="UTF-8", to="ASCII", sub="")
-
-# removing retweets, in case needed 
-tweets_sentiment <-gsub("(RT|via)((?:\\b\\w*@\\w+)+)","",tweets_sentiment)
-
-# removing mentions, in case needed
-tweets_sentiment <-gsub("@\\w+","",tweets_sentiment)
-ew_sentiment<-get_nrc_sentiment((tweets_sentiment))
-sentimentscores<-data.frame(colSums(ew_sentiment[,]))
-names(sentimentscores) <- "Score"
-sentimentscores <- cbind("sentiment"=rownames(sentimentscores),sentimentscores)
-rownames(sentimentscores) <- NULL
-ggplot(data=sentimentscores,aes(x=sentiment,y=Score))+
-  geom_bar(aes(fill=sentiment),stat = "identity")+
-  theme(legend.position="none")+
-  xlab("Sentiments")+ylab("Scores")+
-  ggtitle("Total sentiment based on scores 2020")+
-  theme_minimal()
-
-```
-*Sentiment analysis for positive or negative tweets 2021*
+To see the nature of the tweets we can make a sentiment analysis. We do that for both years again and see that in 2020 the negativity and positivity scores the highest. In 2021 we however see that the difference in sentiment scores is a bit bigger now: it's more negative. That's a noticable difference!
 
 ```{r}
-# Converting tweets to ASCII to trackle strange characters
-tweets_sentiment_1 <- iconv(tweets, from="UTF-8", to="ASCII", sub="")
 
-# removing retweets, in case needed 
-tweets_sentiment_1 <-gsub("(RT|via)((?:\\b\\w*@\\w+)+)","",tweets_sentiment_1)
-
-# removing mentions, in case needed
-tweets_sentiment_1 <-gsub("@\\w+","",tweets_sentiment_1)
-ew_sentiment<-get_nrc_sentiment((tweets_sentiment))
-sentimentscores<-data.frame(colSums(ew_sentiment[,]))
-names(sentimentscores) <- "Score"
-sentimentscores <- cbind("sentiment"=rownames(sentimentscores),sentimentscores)
-rownames(sentimentscores) <- NULL
-ggplot(data=sentimentscores,aes(x=sentiment,y=Score))+
-  geom_bar(aes(fill=sentiment),stat = "identity")+
-  theme(legend.position="none")+
-  xlab("Sentiments")+ylab("Scores")+
-  ggtitle("Total sentiment based on scores 2021")+
-  theme_minimal()
+sentiment <- function(year){ 
+  tweets_sentiment <- iconv(tweets(year), from="UTF-8", to="ASCII", sub="")# Converting tweets to ASCII to        trackle strange characters
+  
+  # removing retweets, in case needed 
+  tweets_sentiment <-gsub("(RT|via)((?:\\b\\w*@\\w+)+)","",tweets_sentiment)
+  
+  # removing mentions, in case needed
+  tweets_sentiment <-gsub("@\\w+","",tweets_sentiment)
+  ew_sentiment<-get_nrc_sentiment((tweets_sentiment))
+  sentimentscores<-data.frame(colSums(ew_sentiment[,]))
+  names(sentimentscores) <- "Score"
+  sentimentscores <- cbind("sentiment"=rownames(sentimentscores),sentimentscores)
+  rownames(sentimentscores) <- NULL
+  
+  # make plot
+  ggplot(data=sentimentscores,aes(x=sentiment,y=Score))+
+    geom_bar(aes(fill=sentiment),stat = "identity")+
+    theme(legend.position="none")+
+    xlab("Sentiments")+ylab("Scores")+
+    ggtitle("Total sentiment based on scores" )+
+    theme_minimal()
+  
+}
+sentiment(2020)
+sentiment(2021)
 
 ```
-
 
 
 *Visualizing the variables in the dataset 2020*
 
+We now want to visualize retweets by location. 
+
 ```{r}
-#Making a ggplot
-#ploting retweets by location
-ggplot(data = blm2020) + 
-  geom_point(mapping = aes(x = retweet, y = location))
+retweet_location <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = retweet, y = location))
+}
+retweet_location(2020)
+retweet_location(2021)
 ```
+
+We now want to visualize the retweet by date for both years.
+
 ```{r}
-#ploting retweets by datetime
-#need to separate date from time
-ggplot(data = blm2020) + 
-  geom_point(mapping = aes(x = retweet, y = datetime), color = "blue")
+retweet_date <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = retweet, y = date), color = "blue")
+}
+
+retweet_date(2020)
+retweet_date(2021)
 
 ```
 *Graphing users amount of followers and user amount friends*
+We also want to visualize the relationship between the amount of followers and the amount of friens. 
 
 ```{r}
-ggplot(data = blm2020) + 
-  geom_point(mapping = aes(x = user_amount_followers, y = user_amount_friends), color = "blue")
+followers_friends <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = user_amount_followers, y = user_amount_friends), color = "blue")
+}
 
+followers_friends(2020)
+followers_friends(2021)
 ```
 
 *Graphing users amount status by location*
-To check how much users Tweet by Location
+
 ```{r}
-ggplot(data = blm2020) + 
-  geom_point(mapping = aes(x = user_amount_status, y = location), color = "blue")
+status_location <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = user_amount_status, y = location), color = "blue")
+}
+
+status_location(2020)
+status_location(2021)
 ```
 #Filter if parties are mentioned in 2020
 
@@ -303,192 +265,4 @@ state.name[grep ("VVD", "PvdA", "PVV", "CDA", "SP", "CU", "PvdD", state.name)]
 ```
 
 
-*Visualizing the variables in the dataset 2021*
-####needs amendments!!!!
-```{r}
-#Making a ggplot
-#ploting retweets by location
-ggplot(data = blm2021) + 
-  geom_point(mapping = aes(x = retweet, y = location))
 ```
-```{r}
-#ploting retweets by datetime
-#need to separate date from time
-ggplot(data = blm2021) + 
-  geom_point(mapping = aes(x = retweet, y = datetime), color = "blue")
-
-```
-*Graphing users amount of followers and user amount friends*
-
-```{r}
-ggplot(data = blm2021) + 
-  geom_point(mapping = aes(x = user_amount_followers, y = user_amount_friends), color = "blue")
-
-```
-
-*Graphing users amount status by location*
-To check how much users Tweet by Location
-```{r}
-ggplot(data = blm2021) + 
-  geom_point(mapping = aes(x = user_amount_status, y = location), color = "blue")
-```
-#Filter if parties are mentioned in 2021
-
-```{r}
-state.name[grep ("VVD", "PvdA", "PVV", "CDA", "SP", "CU", "PvdD", state.name)]
-
-# add "BIJ1" and "D66" -> I did see some tweets containing these. 
-```
-
-```{r}
-#remove dollar signs #better to do this in cleaning? 
-
-blm2020<-gsub("\\$", "", blm2020)
-blm2021<-gsub("\\$","", blm2021)
-
-```
-
-*Sentiment analysis*
-
-```{r}
-# create a list of tokens
-#https://www.kaggle.com/rtatman/tokenization-tutorial
-
-tokens_2020<-data.frame(text= blm2020) %>% unnest_tokens(word, text)
-tokens_2020
-tokens_2021<-data.frame(text=blm2021) %>% unnest_tokens(word, text)
-tokens_2021
-```
-
-Now that we have a list of tokens, we need to compare them against a list of words with either positive or negative sentiment.
-
-```{r}
-# get the sentiment from the first text: 
-tokens_2020 %>%
-  inner_join(get_sentiments("bing")) %>% # pull out only sentiment words
-  count(sentiment) %>% # count the # of positive & negative words
-  spread(sentiment, n, fill = 0) %>% # made data wide rather than narrow
-  mutate(sentiment = positive - negative) # # of positive words - # of negative words
-
-```
-```{r}
-#do the same for 2021
-
-tokens_2021 %>%
-  inner_join(get_sentiments("bing")) %>% # pull out only sentiment words
-  count(sentiment) %>% # count the # of positive & negative words
-  spread(sentiment, n, fill = 0) %>% # made data wide rather than narrow
-  mutate(sentiment = positive - negative) # # of positive words - # of negative words
-
-```
-
-
-```{r}
-blm2020$sentiment<-get_sentiment(blm2020$text)
-blm2021$sentiment<-get_sentiment(blm2021$text)
-
-```
-
-Now we will perform an ANOVA with DV the sentiment of the text and control variable the source of the tweet
-
-https://www.scribbr.com/statistics/anova-in-r/
-
-```{r}
-#2020
-one.way_2020 <- aov(sentiment ~ source_tweet , data = blm2020)
-
-summary(one.way_2020)
-```
-```{r}
-#2021
-
-one.way_2021 <- aov(sentiment ~ source_tweet, data = blm2021)
-
-summary(one.way_2021)
-
-
-```
-
-
-
-#How can we measure how many tweets are made by location?
-
-references:
-1. https://towardsdatascience.com/a-guide-to-mining-and-analysing-tweets-with-r-2f56818fdd16
-2. https://ourcodingclub.github.io/tutorials/time/
-3. https://cran.r-project.org/web/packages/stopwords/stopwords.pdf
-4. https://www.dummies.com/programming/r/how-to-search-for-individual-words-in-r/
-5. https://r4ds.had.co.nz/data-visualisation.html
-6. Anova and sentiment analysis: https://www.kaggle.com/rtatman/tutorial-sentiment-analysis-in-r
-```{r}
-sum(""(BLM2020))
-sum(is.na(BLM2020$Datetime))
-sum(is.na(BLM2020$Text))
-sum(is.na(BLM2020$Tweet.Id))
-sum(is.na(BLM2020$Username))
-sum(is.na(BLM2020$Location))
-sum(is.na(BLM2020$Location))
-summary(BLM2020)
-summary(BLM2020$Location)
-```
-
-*regression retweets*
-
-```{r}
-retweets_glm <-glm(Retweet ~ ., data=BLM2020)
-```
-
-*One way ANOVA*
-
-```{r}
-#removing html tags from the source_tweet variable
-
-library(textclean)
-html_tags <- c(
-    "<bold>Random</bold> text with symbols: &nbsp; &lt; &gt; &amp; &quot; &apos;",
-    "<p>More text</p> &cent; &pound; &yen; &euro; &copy; &reg;"
-)
-
-blm2020$source_tweet<- replace_html(blm2020$source_tweet)
-
-
-```
-
-*running the test*
-
-```{r}
-#creating a 
-
-one.way <- aov(source_tweet ~ ., data = blm2020)
-
-# See whether there are more likes to a tweet when a user has more followers
-ANOVAlikes <- aov(like ~ user_amount_followers, data = BLM_merged)
-summary(one.way)
-
-# See whether there are more retweets to a tweet when a user has more followers
-ANOVAretweets <- aov(retweet ~ user_amount_followers, data = BLM_merged)
-summary(one.way)
-
-# See whether sentimentscores differ with the year they are tweeted in
-one.way <- aov(sentimentscores ~ year_tweeted, data = BLM_merged)
-summary(one.way)
-
-# See whether likes and retweets have an impact on followers of the user
-two.way <- aov(user_amount_followers ~ like*retweet, data = BLM_merged)
-summary(two.way)
-
-#how to make this one? Effect of sentiment and the year on the amount of tweets
-two_ANOVA <- aov(amount of tweets ~ sentiment*year_tweeted, data = BLM_merged)
-summary(two.way)
-
-```
-
-
-#Graphs for every variable 
-#Graph on user ammount of followers
-#Check if a user has made multiple tweets - how can we do that?
-#We have to filter on user_id for this, user_id has a lot of e+, I made new variables within the data at the preclean stage
-sum(duplicated(blmdata$user_id_full)) #to see if there are duplicates? 
-unique(blmdata$user_id_full, incomparables = FALSE)
-
-#Filter if parties are mentioned
