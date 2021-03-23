@@ -19,25 +19,18 @@ The makefile can be found in the src folder. Have a look at before you run it!
 
 When you run the makefile, please make sure to download the following R packages on the version of R git is using. The following
 packages should be installed: 
-library(rtweet)
-library(dplyr)
-library(textclean)
-library(tidyr)
-library(tibble)
-library(tidytext)
-library(tidyverse)
-library(tokenizers)
-library(ggplot.multistats)
-library(ggplot2)
-library(forestmangr)
-library(syuzhet)
-library(readxl)
-library(stringr) 
-library(stopwords)
-library(lobstr)
-library(data.table)
-library(readxl) 
-library(tokenizers)
-library(stopwords)
-library(lobstr)
-library(glue)
+```
+install.packages("rtweet")
+install.packages("dplyr")
+install.packages("textclean")
+install.packages("tidyr")
+install.packages"(data.table")
+```
+If the package are installed, you can make sure they are opened to see it with the following code:
+```
+library("rtweet")
+library("dplyr")
+library("textclean")
+library("tidyr")
+library("data.table")
+```
