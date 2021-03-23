@@ -1,0 +1,269 @@
+---
+title: "BLM data analysis"
+output: html_notebook
+---
+
+*Installing required packages*
+
+```{r}
+library(rtweet) 
+library(tidyr)
+library(ggplot.multistats)
+library(ggplot2)
+library(forestmangr)
+library(syuzhet)
+library(tidyverse)
+library(readxl) # read excel
+library(tibble) # tobble dataframe
+library(dplyr) # piping
+library(stringr) # character manipulation
+library(tidytext)
+library(tokenizers)
+library(stopwords)
+library(lobstr)
+library(glue)
+library(lubridate)
+library(httr)
+library(readr)
+```
+*Loading the data*
+
+```{r}
+blm2020<-read.csv('../../gen/data-preparation/temp/BLM2020_dataset.csv', sep = ' ', na.strings=c("", "NA"))
+
+blm2021<-read.csv('../../gen/data-preparation/temp/BLM2021_dataset.csv', sep = '', na.strings=c("", "NA"))
+```
+
+
+*Sentiment analysis for positive or negative tweets 2020*
+
+```{r}
+#removing stop words from the text - so the most frequent words are not or at and
+
+tweets <- blm2020 %>%
+  select(text) %>%
+  unnest_tokens(word, text)
+tweets <- tweets %>%
+  anti_join(get_stopwords(language = "nl", source = "snowball"))
+
+
+#2020
+
+# Converting tweets to ASCII to trackle strange characters
+tweets_sentiment <- iconv(tweets, from="UTF-8", to="ASCII", sub="")
+
+# removing retweets, in case needed 
+tweets_sentiment <-gsub("(RT|via)((?:\\b\\w*@\\w+)+)","",tweets_sentiment)
+
+#2021
+
+# Converting tweets to ASCII to trackle strange characters
+tweets_sentiment_1 <- iconv(tweets, from="UTF-8", to="ASCII", sub="")
+
+# removing retweets, in case needed 
+tweets_sentiment_1 <-gsub("(RT|via)((?:\\b\\w*@\\w+)+)","",tweets_sentiment_1)
+
+
+```
+
+```{r}
+#remove dollar signs #better to do this in cleaning? 
+
+blm2020 <- gsub("\\$","", blm2020)
+blm2021 <- gsub("\\$","", blm2021)
+
+```
+
+*Sentiment analysis*
+
+```{r}
+# create a list of tokens
+#https://www.kaggle.com/rtatman/tokenization-tutorial
+
+tokens_2020<-data.frame(text= blm2020) %>% unnest_tokens(word, text)
+tokens_2020
+tokens_2021<-data.frame(text=blm2021) %>% unnest_tokens(word, text)
+tokens_2021
+```
+
+Now that we have a list of tokens, we need to compare them against a list of words with either positive or negative sentiment.
+
+```{r}
+# create a list of tokens
+#https://www.kaggle.com/rtatman/tokenization-tutorial
+
+tokens_2020<-data.frame(text= blm2020) %>% unnest_tokens(word, text)
+tokens_2020
+tokens_2021<-data.frame(text=blm2021) %>% unnest_tokens(word, text)
+tokens_2021
+```
+
+
+```{r}
+# get the sentiment from the first text: 
+tokens_2020 %>%
+  inner_join(get_sentiments("bing")) %>% # pull out only sentiment words
+  dplyr::count(sentiment) %>% # count the # of positive & negative words
+  spread(sentiment, n, fill = 0) %>% # made data wide rather than narrow
+  mutate(sentiment = positive - negative) # # of positive words - # of negative words
+
+```
+```{r}
+#do the same for 2021
+
+tokens_2021 %>%
+  inner_join(get_sentiments("bing")) %>% # pull out only sentiment words
+  dplyr::count(sentiment) %>% # count the # of positive & negative words
+  spread(sentiment, n, fill = 0) %>% # made data wide rather than narrow
+  mutate(sentiment = positive - negative) # # of positive words - # of negative words
+
+```
+
+*Loading again the data*
+
+```{r}
+blm2020<-read.csv('../../gen/data-preparation/temp/BLM2020_dataset.csv', sep = ' ', na.strings=c("", "NA"))
+
+blm2021<-read.csv('../../gen/data-preparation/temp/BLM2021_dataset.csv', sep = '', na.strings=c("", "NA"))
+```
+
+
+```{r}
+blm2020$sentiment<-get_sentiment(blm2020$text)
+blm2021$sentiment<-get_sentiment(blm2021$text)
+blm_merged$sentiment<-get_sentiment(blm_merged$text)
+
+```
+
+*ANOVA test*
+
+Previous literature indicates that sentiment analysis can explain various socio-political events in which electoral study is a dominant domain (Khatua et al. 2020) *https://doi.org/10.1016/j.asoc.2020.106743. In a relevant study Murthy et al. 2015 it is suggest that social media content differs when it is produced on mobile versus web platforms. According to the authors, tweets from smarthphones expersses the immediate thoughts, feelings and surroundings of the user, whereas web-based tweets encourage more carefull reflections of users opinion leading to less sentiment-laden tweets.  
+In the current study we will examine how the device from which a tweet is being posted (source_of_tweet) might influence the sentiment of that tweet. To do that we will perform a one-way ANOVA to determine whether there are any statistically significant differences between the different devices users can tweet. https://doi-org.tilburguniversity.idm.oclc.org/10.1111/jcom.12176
+The Dependent Variable in our analysis will be the sentiment and the Independent Variable the source.
+
+The p-value threshold used is 0.05
+
+
+https://www.scribbr.com/statistics/anova-in-r/
+
+*One way ANOVA*
+
+```{r}
+#2020
+one.way_2020 <- aov(sentiment ~ source_tweet , data = blm2020)
+
+summary(one.way_2020)
+
+#2021
+
+one.way_2021 <- aov(sentiment ~ source_tweet, data = blm2021)
+
+summary(one.way_2021)
+```
+
+
+*explaining results*
+
+#2020
+
+Analysis the results we get, we can observe that in 2020 the F value is 3.613 and the p-value is close to 0, hence we can safely reject the null hypothesis, meaning that our results are statistically significant. In other words the device used by the user to tweet influences the sentiment of the tweet. 
+
+#2021
+
+Likewise, performing the same test for the 2021 tweets we get an F-value 3.775 and a p-value close to zero, meaning that again we can safely reject the null hypothesis. 
+
+
+*running some more ANOVA tests*
+
+```{r}
+# See whether there are more likes to a tweet when a user has more followers
+ANOVAlikes <- aov(like ~ user_amount_followers, data = blm_merged)
+summary(ANOVAlikes)
+```
+The result is highly significant with a cooperatively large F-value and a p value almost close to 0. The above results indicate that the is statistical significance between the likes a user has on his/her tweets with the amount of followers he/she has.
+
+```{r}
+# See whether there are more retweets to a tweet when a user has more followers
+ANOVAretweets <- aov(retweet ~ user_amount_followers, data = blm_merged)
+summary(ANOVAretweets)
+```
+Again, the result is significant, meaning that the number of retweets on post is dependent on the amount of followers  
+```{r}
+
+# See whether sentiments cores differ with the year they are tweeted in
+ANOVAyear <- aov(sentiment ~ year, data = blm_merged)
+summary(ANOVAyear)
+
+# See whether likes and retweets have an impact on followers of the user
+#ANOVAfollowers <- aov(user_amount_followers ~ like*retweet, data = blm_merged)
+#summary(ANOVAfollowers)
+
+#counting the positive/negative tweets for 2020, 2021 and the merged file
+
+#2020
+blm2020$negative<-as.numeric(blm2020$sentiment <=1)
+blm2020$positive<-as.numeric(blm2020$sentiment >1)
+
+#2021
+blm2021$negative<-as.numeric(blm2021$sentiment <=1)
+blm2021$positive<-as.numeric(blm2021$sentiment >1)
+
+#blm_merged
+blm_merged$negative<-as.numeric(blm_merged$sentiment <=1)
+blm_merged$positive<-as.numeric(blm_merged$sentiment >1)
+
+
+
+#See whether the negative comments are dependent on the year
+ANOVAsentiment_negative <- aov(negative ~ year, data = blm_merged)
+summary(ANOVAsentiment_negative)
+
+#The same for positive
+
+ANOVAsentiment_positive <- aov(positive ~ year, data = blm_merged)
+summary(ANOVAsentiment_positive)
+
+
+```
+
+Analyzing the results above, ANOVAsentiment_negative has a p value above 0.5 and a low F value meaning that the null hypothesis of no difference in means is true. 
+
+On the other hand, there is significance when it comes to ANOVAsentiment_positive. This means that positive tweets are dependent on the year posted.
+
+*ANOVA positive and negative tweets analysis 2020, 2021 based on the date*
+
+Similarly, we are going to perform an ANOVA within each year to see if the negative or positive tweets are dependent on the date and if there are more significant results closer to the elections.
+```{r}
+
+#2020
+
+ANOVAsentiment_negative_2020 <- aov(negative ~ date, data = blm2020)
+summary(ANOVAsentiment_negative_2020)
+
+ANOVAsentiment_positive_2020 <- aov(positive ~ date, data = blm2020)
+summary(ANOVAsentiment_positive_2020)
+
+
+```
+Here, we see that when it comes to the dates within 2020 date is not significatly effecting the amount of positive or negative tweets posted. The null hypothesis of no differnece in means is true.
+
+
+```{r}
+#2021
+
+ANOVAsentiment_positve_2021 <- aov(positive ~ date, data = blm2021)
+summary(ANOVAsentiment_positve_2021)
+
+ANOVAsentiment_negative_2021 <- aov(negative ~ date, data = blm2021)
+summary(ANOVAsentiment_negative_2021)
+```
+On the contrary, during 2021, which is the year of the Dutch elections we see that the positive and negative tweets are depndent on date with equal p values of 0.0038 
+
+
+references:
+1. https://towardsdatascience.com/a-guide-to-mining-and-analysing-tweets-with-r-2f56818fdd16
+2. https://ourcodingclub.github.io/tutorials/time/
+3. https://cran.r-project.org/web/packages/stopwords/stopwords.pdf
+4. https://www.dummies.com/programming/r/how-to-search-for-individual-words-in-r/
+5. https://r4ds.had.co.nz/data-visualisation.html
+6. Anova and sentiment analysis: https://www.kaggle.com/rtatman/tutorial-sentiment-analysis-in-r
