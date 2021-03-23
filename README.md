@@ -1,5 +1,6 @@
 # Are #BlackLivesMatter tweets used in the campaign for the Dutch elections?
-This is the Data Preparation project of Team 9. 
+
+This is a project on data collection and preparation of data composed during 2020, 2021 regarding the #BlackLivesMatter and #BLM usage before and during the Dutch Elections of 2021.
 
 We have done datacollection by scraping tweets from the Twitter website containing the hashtag or text; BLM or Black Lives Matter. 
 We did this for two time periods, the first months of 2020 and the first months of 2021. In the first months of 2021, campaigns of 
