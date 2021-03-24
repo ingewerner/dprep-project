@@ -7,14 +7,6 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
-```{r}
----
-title: "BLM data analysis"
-output: html_notebook
----
-```
-
-
 *Installing required packages*
 
 ```{r}
@@ -48,13 +40,22 @@ blm_merged<-read.csv('../../gen/data-preparation/merging.csv', sep = ',', na.str
 ```{r}
 
 # remove first column 
+<<<<<<< HEAD
 blm_merged <- subset(blm_merged, select = -X)
+=======
+#blm_merged <- subset(blm_merged, select = -X)
+#blm_merged <- subset(blm_merged, select = -row.names)
+>>>>>>> 2c6db32811b1c68346901f2fed506132a4d0a8bc
 
 # set user_created_date as date
 blm_merged$user_created_date <- as.Date(blm_merged$user_created_date, format = c("%Y-%m-%d"))
 
 # Set date into as.Date
+<<<<<<< HEAD
 blm_merged$tweet_date <- as.Date(blm_merged$tweet_date)
+=======
+blm_merged$tweet_date <- as.Date(blm_merged$tweet_date )
+>>>>>>> 2c6db32811b1c68346901f2fed506132a4d0a8bc
 
 ```
 
