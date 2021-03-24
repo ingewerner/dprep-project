@@ -188,3 +188,5 @@ for (i in seq(along=data_blm)) {
 }
 
 rm(blmdata)
+prepared_data[[1]]
+prepared_data[[2]]
