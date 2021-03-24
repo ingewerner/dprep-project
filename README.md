@@ -6,7 +6,7 @@
 
 ## Motivation
 
-Black Lives Matter is a topic everyone knows about these days. It comes with a lot of sentiment and emotions. Especially regariding politics, the Black Lives Matter movement is one that political parties should have an opinion about. With more known about this topic, the national debate and the actions of political parties in the Netherlands regarding this topic, politicians can make strategies in order to strategically position their party as preparation for the Dutch elections. In order to provide an up-to-date research about this topic in combination with the sentiment of the Dutch population, we provided this data and pipeline structure. 
+Black Lives Matter is a topic everyone knows about these days. It comes with a lot of sentiment and emotions. Especially regarding politics, the Black Lives Matter movement is one that political parties should have an opinion about. With more knowledge about this topic, the national debate and the actions of political parties in the Netherlands regarding the black lives matter issue, politicians can make strategies in order to strategically position their party as preparation for the Dutch elections. In order to provide an up-to-date research about this topic in combination with the sentiment of the Dutch population, we provided this data and pipeline structure. 
 
 To research this topic, data of the first months of 2020 and 2021, before and during the Dutch Elections of 2021, regarding the #BlackLivesMatter and #BLM usage is collected. This research is composed in 2021. 
 
