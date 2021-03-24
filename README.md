@@ -25,14 +25,15 @@ few analysis will be conducted.
 The repository your are currently in is build with different pipelines. We made a makefile in order to automize everything and connect the pipelines. This entails that the whole proces from data loading untill reviewing analysis can be done by simply running the makefile. If you don't know how to do this, we would advise you to do the following tutorial: [https://tilburgsciencehub.com/tutorials/reproducible-research/practicing-pipeline-automation-make/overview/]
 
 *Our repository has the following structure:*
-|-------  README.md
-|-------  src
-|          |------ analysis
-|          |------ data-preparation
-|-------  datasets
-|-------  gen
-           |------ analysis
-           |------ data-preparation
+
+├── README.md
+├── src
+│   ├── analysis
+│   ├── data-preparation
+└── datasets
+└── gen
+    ├── analysis
+    ├── data-preparation
 
 ## Running instructions
 The data is collected in python. The python code can be found in this repository. In order to run this, you need to be able to run the python file with any program you like. 
