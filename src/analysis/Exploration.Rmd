@@ -87,7 +87,7 @@ RLRdata2021
 
 *Visualizing the data 2020*
 
-By visualizing what kind of tweets are relatively most often used, we can directly see that the tweets of 2020 are most often liked compared to the replies, retweets and quoted tweets. A meaning of a like represents that you like the post but do not repost it as retweets or quoted tweets do. 
+By visualizing what kind of tweets are relatively most often used, we can directly see that the tweets of 2020 are most often liked compared to the replies, retweets and quoted tweets. A like represents that you like the post but do not repost it as retweets or quoted tweets do. 
 
 ```{r}
 #Adding columns
@@ -276,7 +276,7 @@ followers_friends(2021)
 
 *Graphing users amount followers and source of tweet*
 
-We want to check the relationship between the source of the tweet and the amount of user followers. As you might expect that when an user has a large number of followers, it needs to post more and an app might be more convient for that than using the webbrowser. For both years we see that the Twitter Web App and Twitter for iPhone are most used. For 2020 we that users with the most amount of followers often use Twitter for Iphone. For 2021 we see however that TweetDeck is used for the user with the most amount of followers. We also see in 2021 that twitter for Android has been more used but that is probably due to the amount of tweets in 2021 compared to 2020. 
+We want to check the relationship between the source of the tweet and the amount of user followers. As you might expect that when an user has a large number of followers, it needs to post more and an app might be more convient for that than using the webbrowser. For both years we see that the Twitter Web App and Twitter for iPhone are most used. For 2020 we see that users with the most amount of followers often use Twitter for Iphone. For 2021 we see however that TweetDeck is used for the user with the most amount of followers. We also see in 2021 that twitter for Android has been more used but that is probably due to the amount of tweets in 2021 compared to 2020. 
 
 ```{r}
 time_source_tweet <- function(year){ 
