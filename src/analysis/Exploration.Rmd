@@ -77,9 +77,8 @@ RLR <- function(year){
 }
 
 RLRdata2020 <- RLR(2020)
-RLRdata2020
 RLRdata2021 <- RLR(2021)
-RLRdata2021
+
 ```
 
 
@@ -110,9 +109,6 @@ ggplot(RLRdata2020, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Type_of_Tweet
   xlim(c(2, 4)) +
   theme_void() +
   theme(legend.position = "right")
-
-
-
 ```
 *Visualizing the data 2021*
 
