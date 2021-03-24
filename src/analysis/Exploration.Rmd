@@ -7,14 +7,6 @@ This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute
 
 Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
 
-```{r}
----
-title: "BLM data analysis"
-output: html_notebook
----
-```
-
-
 *Installing required packages*
 
 ```{r}
@@ -48,14 +40,22 @@ blm_merged<-read.csv('../../gen/data-preparation/merging.csv', sep = ',', na.str
 ```{r}
 
 # remove first column 
+<<<<<<< HEAD
 blm_merged <- subset(blm_merged, select = -X)
-blm_merged <- subset(blm_merged, select = -row.names)
+=======
+#blm_merged <- subset(blm_merged, select = -X)
+#blm_merged <- subset(blm_merged, select = -row.names)
+>>>>>>> 2c6db32811b1c68346901f2fed506132a4d0a8bc
 
 # set user_created_date as date
 blm_merged$user_created_date <- as.Date(blm_merged$user_created_date, format = c("%Y-%m-%d"))
 
 # Set date into as.Date
-blm_merged$date <- as.Date(blm_merged$date)
+<<<<<<< HEAD
+blm_merged$tweet_date <- as.Date(blm_merged$tweet_date)
+=======
+blm_merged$tweet_date <- as.Date(blm_merged$tweet_date )
+>>>>>>> 2c6db32811b1c68346901f2fed506132a4d0a8bc
 
 ```
 
@@ -77,6 +77,7 @@ RLR <- function(year){
 }
 
 RLRdata2020 <- RLR(2020)
+RLRdata2020
 RLRdata2021 <- RLR(2021)
 
 ```
@@ -155,11 +156,11 @@ blm_merged$text  <-  gsub("[\r\n]", "", blm_merged$text)
 blm_merged$text  <-  gsub("[[:punct:]]", "", blm_merged$text)
 
 tweets <- function(year){
-  tweets2020 <- blm_merged[blm_merged$year == year,] %>% 
+  tweets <- blm_merged[blm_merged$year == year,] %>% 
     select(text) %>%
     unnest_tokens(word, text)
-  tweets2020 <- tweets2020 %>%
-    anti_join(stop_words)
+  tweets <- tweets %>%
+    anti_join(get_stopwords(language = "nl", source = "snowball"))
 }
 
 tweets(2020)
@@ -234,12 +235,12 @@ sentiment(2021)
 We are now visalizing the likes by date for both years, as likes were most used compared to retweets and replies. We see that the most likes were in march of 2020. Additionally in 2021 that is the case for january. We, however, also see a large number of likes during february and march in 2021. We expected to see that approaching the elections of the Netherlands. 
 
 ```{r}
-retweet_location <- function(year){ 
+like_date <- function(year){ 
   ggplot(data = blm_merged[blm_merged$year == year,]) + 
-    geom_point(mapping = aes(x = like, y = date))
+    geom_point(mapping = aes(x = like, y = tweet_date))
 }
-retweet_location(2020)
-retweet_location(2021)
+like_date(2020)
+like_date(2021)
 ```
 
 We now want to visualize the retweets by date for both years, as retweets were increasing by the years. When we check the plots, we see that as well. We see that a tweet is retweeted the most for 2020 in march, and for 2021 in january. We however expected that approaching the elections in the Netherlands (march 2021), tweets using the blm statements were more retweeted in March then in January to get the attention. 
@@ -248,7 +249,7 @@ We now want to visualize the retweets by date for both years, as retweets were i
 ```{r}
 retweet_date <- function(year){ 
   ggplot(data = blm_merged[blm_merged$year == year,]) + 
-    geom_point(mapping = aes(x = retweet, y = date), color = "blue")
+    geom_point(mapping = aes(x = retweet, y = tweet_date), color = "blue")
 }
 
 retweet_date(2020)
@@ -263,7 +264,8 @@ We also want to check the relationship between the amount of followers and the a
 ```{r}
 followers_friends <- function(year){ 
   ggplot(data = blm_merged[blm_merged$year == year,]) + 
-    geom_point(mapping = aes(x = user_amount_followers, y = user_amount_friends), color = "blue")
+    geom_point(mapping = aes(x = user_amount_followers, 
+                             y = user_amount_friends, color = "blue"))
 }
 
 followers_friends(2020)
@@ -286,13 +288,12 @@ time_source_tweet(2021)
 #Filter if parties are mentioned in 2020
 
 ```{r}
-names <- c("pvv|vvd|CDA|D66|GroenLinks|SP|PVDA|ChristenUnie|pvdd|50plus|DENK|FVD|BIJ1")
+#names <- c("pvv|vvd|CDA|D66|GroenLinks|SP|PVDA|ChristenUnie|pvdd|50plus|DENK|FVD|BIJ1")
 
-parties <- function(year){ 
-  length(grep(names, blm_merged[blm_merged$year == 2020,]$text))
-}
+#parties <- function(year){ 
+  #length(grep(names, blm_merged[blm_merged$year == 2020,]$text))}
 
-parties(2020)
+#(2020)
 ```
 
 
