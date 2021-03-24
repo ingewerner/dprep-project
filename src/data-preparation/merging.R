@@ -8,7 +8,7 @@ blm2021<-read.csv('../../gen/data-preparation/temp/BLM2021_dataset.csv', sep = '
 
 # merge data
 blm_merged <- rbind(blm2020, blm2021)
-
+blm_merged$quote_count <- as.integer(blm_merged$quote_count)
 ##  ----------------------cleaning merged data; remove first column, set date as.Date and add column with year --------------------------- ##
 
 
@@ -21,7 +21,7 @@ blm_merged$user_created_date <- as.Date(blm_merged$user_created_date)
 
 
 # add column with year of tweets
-blm_merged$year <- format(blm_merged$date, format = "%Y")
+blm_merged$year <- format(blm_merged$tweet_date, format = "%Y")
 
 ## --------------- end cleaning: write over in csv file -------------------## 
 
