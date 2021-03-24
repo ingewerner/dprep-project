@@ -26,6 +26,8 @@ The repository your are currently in is build with different pipelines. We made 
 
 *Our repository has the following structure:*
 
+```bash
+
 ├── README.md
 ├── src
 │   ├── analysis
@@ -35,6 +37,7 @@ The repository your are currently in is build with different pipelines. We made 
     ├── analysis
     ├── data-preparation
 
+```
 ## Running instructions
 The data is collected in python. The python code can be found in this repository. In order to run this, you need to be able to run the python file with any program you like. 
 
