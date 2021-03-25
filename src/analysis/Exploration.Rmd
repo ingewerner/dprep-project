@@ -292,28 +292,7 @@ time_source_tweet <- function(year){
 time_source_tweet(2020)
 time_source_tweet(2021)
 ```
-#Filter if parties are mentioned in 2020
 
-```{r}
-names <- c("pvv|vvd|CDA|D66|GroenLinks|SP|PVDA|ChristenUnie|pvdd|50plus|FVD|BIJ1")
-
-#parties <- function(year){ 
-  #length(grep(names, blm_merged[blm_merged$year == 2020,]$text))}
-
-#(2020)
-library(stringr)
-getCount <- function(data,keyword)
-{
-  pvv <- str_count(blm_merged$text, keyword)
-  return(data.frame(data,wcount))
-}
-
-wcount_df <- getCount(blm_merged, names)
-sum(wcount[wcount$year == 2021,]$wcount, na.rm = TRUE)
-sum(wcount[wcount$year == 2020,]$wcount, na.rm = TRUE)
-
-
-```
 
 
 
