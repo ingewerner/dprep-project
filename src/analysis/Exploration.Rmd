@@ -239,7 +239,7 @@ sentiment(2021)
 
 *Visualizing the variables in the dataset 2020*
 
-We are now visalizing the likes by date for both years, as likes were most used compared to retweets and replies. We see that the most likes were in march of 2020. Additionally in 2021 that is the case for january. We, however, also see a large number of likes during february and march in 2021. We expected to see that approaching the elections of the Netherlands. 
+We are now visualizing the likes by date for both years, as likes were most used compared to retweets and replies. We see that the most likes were in march of 2020. Additionally in 2021 that is the case for january. We, however, also see a large number of likes during february and march in 2021. We expected to see that approaching the elections of the Netherlands. 
 
 ```{r}
 like_date <- function(year){ 
@@ -249,6 +249,21 @@ like_date <- function(year){
 like_date(2020)
 like_date(2021)
 ```
+
+We also would like to visualize the likes against the amount of followers for both years. It could occur that the amount of likes depends on the amount of followers. We do not directly see a relationship. For example, in 2021 most users have below 50,000 followers and around 500 likes. There are some outliers but for both variables. We should make an ANOVA analysis to analyze it further.   
+
+```{r}
+
+like_followers <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = like, y = user_amount_followers))
+}
+like_followers(2020)
+like_followers(2021)
+
+```
+
+
 
 We now want to visualize the retweets by date for both years, as retweets were increasing by the years. When we check the plots, we see that as well. We see that a tweet is retweeted the most for 2020 in march, and for 2021 in january. We however expected that approaching the elections in the Netherlands (march 2021), tweets using the blm statements were more retweeted in March then in January to get the attention. 
 
@@ -263,6 +278,19 @@ retweet_date(2020)
 retweet_date(2021)
 
 ```
+
+
+Again, we also want to know what the relationship between the amount of retweets and the user amount of followers would be for both years. We do not see directly an relationship. In the ANOVA part we will discuss the ANOVA results for this relationship. 
+```{r}
+retweet_followers <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = like, y = user_amount_followers))
+}
+retweet_followers(2020)
+retweet_followers(2021)
+```
+
+
 
 *Graphing users amount of followers and user amount friends*
 
