@@ -16,18 +16,21 @@ library(tidyr)
 library(ggplot.multistats)
 library(ggplot2)
 library(forestmangr)
-library(syuzhet)
+#library(syuzhet)
 library(tidyverse)
-library(readxl) # read excel
-library(tibble) # tobble dataframe
-library(stringr) # character manipulation
+#library(readxl) # read excel
+#library(tibble) # tobble dataframe
+#library(stringr) # character manipulation
 library(tidytext)
 library(tokenizers)
 library(stopwords)
-library(lobstr)
-library(glue)
+#library(lobstr)
+#library(glue)
 library(dplyr) # piping
-
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library(RColorBrewer)
 ```
 *Loading the data*
 
@@ -40,22 +43,23 @@ blm_merged<-read.csv('../../gen/data-preparation/merging.csv', sep = ',', na.str
 ```{r}
 
 # remove first column 
-<<<<<<< HEAD
+
 blm_merged <- subset(blm_merged, select = -X)
-=======
-#blm_merged <- subset(blm_merged, select = -X)
-#blm_merged <- subset(blm_merged, select = -row.names)
->>>>>>> 2c6db32811b1c68346901f2fed506132a4d0a8bc
 
 # set user_created_date as date
 blm_merged$user_created_date <- as.Date(blm_merged$user_created_date, format = c("%Y-%m-%d"))
 
 # Set date into as.Date
-<<<<<<< HEAD
+
 blm_merged$tweet_date <- as.Date(blm_merged$tweet_date)
-=======
-blm_merged$tweet_date <- as.Date(blm_merged$tweet_date )
->>>>>>> 2c6db32811b1c68346901f2fed506132a4d0a8bc
+
+# set integers 
+blm_merged$user_amount_followers <- as.integer(blm_merged$user_amount_followers, na.strings = "NA")
+blm_merged$user_amount_friends <- as.integer(blm_merged$user_amount_friends, na.strings = "NA")
+blm_merged$user_amount_status <- as.integer(blm_merged$user_amount_status, na.strings = "NA")
+blm_merged$user_listed_count <- as.integer(blm_merged$user_listed_count, na.strings = "NA")
+blm_merged$user_media_count <- as.integer(blm_merged$user_media_count, na.strings = "NA")
+
 
 ```
 
@@ -111,6 +115,8 @@ ggplot(RLRdata2020, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Type_of_Tweet
   theme_void() +
   theme(legend.position = "right")
 ```
+
+
 *Visualizing the data 2021*
 
 For 2021 we do the same as before and see that there is a larger amount of retweets in proportion to the types of tweets compared to 2020. Apperantly users are argreeing more with tweets using the blm statements as they want to post the same. We also see that there is a larger amount of quoted tweets in proportion of all types of tweets (compared to 2020), this confirms the previous statement: people are agreeing more and want to speak about it. 
@@ -145,61 +151,62 @@ ggplot(RLRdata2021, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Type_of_Tweet
 
 Lets see which words are more frequently used in the posts of 2020.
 
-First, we want to remove stop words like "so" and "at" for counting the most frequent words
+First, we want to remove dutch stop words like "so" and "at" for counting the most frequent words. We then make a cloud of words. For 2020, we see the words 'all lives matter', 'blm', 'zwarte' and 'Amsterdam' are most used. These words are all related to the black lives matter issue as we expected. It is noticeablt that Amsterdam is used as the government of the Netherlands is placed in the Hague you might expect that there would be more tweets including the Hague. However, Amsterdam also makes sense since it is the capital of the Netherlands. When we check the wordcloud of 2021 the most frequent used words are 'blm', 'ver', 'antia', 'blacklivesmatter'. The word 'ver' means 'far' in dutch. Since that does not make much sense we will leave that for what it is. The other most frequent used words are, however, related to the black lives matter issue. Antia can be related with the Antifa, twitter or one of our codes might have deleted the F. Antifa is the anti-facistic movement in the Netherlands and Belgium. It is against the extreme right-wing parties, nazism, facism and neofacism. It is interesting that this is used so much as it also includes the politics (right-wing parties). 
 
 ```{r}
 
-blm_merged$text <-  gsub("https\\S*", "", blm_merged$text)
-blm_merged$text <-  gsub("@\\S*", "", blm_merged$text) 
-blm_merged$text  <-  gsub("amp", "", blm_merged$text) 
-blm_merged$text  <-  gsub("[\r\n]", "", blm_merged$text)
-blm_merged$text  <-  gsub("[[:punct:]]", "", blm_merged$text)
+clouds <- function(year){
+  docs <- Corpus(VectorSource(blm_merged[blm_merged$year == year,]$text))
+  # Convert the text to lower case
+  docs <- tm_map(docs, content_transformer(tolower))
+  # Remove numbers
+  docs <- tm_map(docs, removeNumbers)
+  # Remove english common stopwords
+  docs <- tm_map(docs, removeWords, stopwords("dutch"))
+  # Remove your own stop word
+  # specify your stopwords as a character vector
+  docs <- tm_map(docs, removeWords, c("blabla1", "blabla2")) 
+  # Remove punctuations
+  docs <- tm_map(docs, removePunctuation)
+  # Eliminate extra white spaces
+  docs <- tm_map(docs, stripWhitespace)
+  # Text stemming
+  docs <- tm_map(docs, stemDocument)
 
-tweets <- function(year){
-  tweets <- blm_merged[blm_merged$year == year,] %>% 
-    select(text) %>%
-    unnest_tokens(word, text)
-  tweets <- tweets %>%
-    anti_join(get_stopwords(language = "nl", source = "snowball"))
+  dtm <- TermDocumentMatrix(docs)
+  m <- as.matrix(dtm)
+  v <- sort(rowSums(m),decreasing=TRUE)
+  d <- data.frame(word = names(v),freq=v)
+
+
+  set.seed(1234)
+  wordcloud(words = d$word, freq = d$freq, min.freq = 1,
+          max.words=200, random.order=FALSE, rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"))
 }
 
-tweets(2020)
-tweets(2021)
+clouds(2020)
+clouds(2021)
 ```
 
 
-We want to see which word is most used in both years seperatly. For 2020 the most frequent word is blacklivesmatter, other most used words are "blm", "zwarte", "amsterdam" and "allivesmatter". 
-For 2021 the most frequent word is blm (the abbreviation of blacklivesmatter), and other most used words are "blacklivesmatter", "antifa" and "mensen".
-
-```{r}
-#making a histogram
-
-histogram_words <- function(year){
-tweets(year) %>% 
-  dplyr::count(word, sort = TRUE) %>%
-  top_n(15) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(x = word, y = n)) +
-  geom_col() +
-  xlab(NULL) +
-  coord_flip() +
-  labs(y = "Count",
-    x = "Unique words",
-    title = "Most frequent words found in blm dataset",
-    subtitle = "Stop words removed from the list")
-}
-
-histogram_words(2020)
-histogram_words(2021)
-
-```
 
 
 *Sentiment analysis for positive or negative tweets 2020*
 
 To see the nature of the tweets we can make a sentiment analysis. We do that for both years and see that in 2020 the negativity and positivity scores the highest. In 2021 we however see that the difference in sentiment scores is slightly bigger: it is more negative. We furthermore also see that in 2021 tweets score higher on disgust. That's a noticable difference! Apperantly people want to raise their voice in a more negative way in 2021.
 
+
+
 ```{r}
+
+tweets <- function(year){
+  tweets <- blm_merged[blm_merged$year == year,] %>%
+    select(text) %>%
+    unnest_tokens(word, text)
+  tweets <- tweets %>%
+    anti_join(get_stopwords(language = "nl", source = "snowball"))
+}
 
 sentiment <- function(year){ 
   tweets_sentiment <- iconv(tweets(year), from="UTF-8", to="ASCII", sub="")# Converting tweets to ASCII to        trackle strange characters
@@ -288,15 +295,25 @@ time_source_tweet(2021)
 #Filter if parties are mentioned in 2020
 
 ```{r}
-#names <- c("pvv|vvd|CDA|D66|GroenLinks|SP|PVDA|ChristenUnie|pvdd|50plus|DENK|FVD|BIJ1")
+names <- c("pvv|vvd|CDA|D66|GroenLinks|SP|PVDA|ChristenUnie|pvdd|50plus|FVD|BIJ1")
 
 #parties <- function(year){ 
   #length(grep(names, blm_merged[blm_merged$year == 2020,]$text))}
 
 #(2020)
+library(stringr)
+getCount <- function(data,keyword)
+{
+  pvv <- str_count(blm_merged$text, keyword)
+  return(data.frame(data,wcount))
+}
+
+wcount_df <- getCount(blm_merged, names)
+sum(wcount[wcount$year == 2021,]$wcount, na.rm = TRUE)
+sum(wcount[wcount$year == 2020,]$wcount, na.rm = TRUE)
+
+
 ```
 
 
-```{r}
 
-```
