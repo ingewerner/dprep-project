@@ -2,16 +2,12 @@
 # Preclean data 2020
 #-------------------------------------------------------------------------------
 
-# Make current directory the working directory
-# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
 # Load packages
 #install.packages('textclean')
 library(data.table)
 library(tidyr)
 library(dplyr)
 library(textclean)
-library("textclean")
 
 # download data 
 
@@ -46,7 +42,6 @@ for (i in seq(along=data_blm)) {
   blmdata$user_description <- replace(blmdata$user_description, blmdata$user_description == "", NA)
   blmdata$quoted_tweet <- replace(blmdata$quoted_tweet, blmdata$quoted_tweet == "", NA)
   
-  
   # Remove duplicates with the distinct function
   sum(duplicated(blmdata))
   blmdata %>% distinct(blmdata$tweet_id)
@@ -59,7 +54,6 @@ for (i in seq(along=data_blm)) {
   blmdata$time <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 2)
   blmdata$date <- as.Date(blmdata$date, format = c("%Y-%m-%d"))
   blmdata$time <- gsub(x=blmdata$time, pattern="+00:00",replacement="",fixed=T)
-  
   
   # The data is a character and needs to be converted into a date variable
   blmdata$user_created_date <- sapply(strsplit(as.character(blmdata$user_created), " "), "[", 1)
