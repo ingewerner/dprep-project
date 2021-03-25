@@ -48,13 +48,13 @@ for (i in seq(along=data_blm)) {
     # The data is a character and needs to be converted into a date variable
     blmdata$tweet_date <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 1)
     blmdata$tweet_time <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 2)
-    blmdata$tweet_date <- as.Date.character(blmdata$tweet_date, format = c("%Y-%m-%d"))
+    blmdata$tweet_date <- as.Date(blmdata$tweet_date, format = c("%Y-%m-%d"))
     blmdata$tweet_time <- gsub(blmdata$tweet_time, pattern="+00:00",replacement="",fixed=T)
    
     # The data is a character and needs to be converted into a date variable
     blmdata$user_created_date <- sapply(strsplit(as.character(blmdata$user_created), " "), "[", 1)
     blmdata$user_created_time <- sapply(strsplit(as.character(blmdata$user_created), " "), "[", 2)
-    blmdata$user_created_date <- as.Date.character(blmdata$user_created_date, format = c("%Y-%m-%d"))
+    blmdata$user_created_date <- as.Date(blmdata$user_created_date, format = c("%Y-%m-%d"))
     blmdata$user_created_time <- gsub(x=blmdata$user_created_time, pattern="+00:00",replacement="",fixed=T)
         
     # remove extra variables
