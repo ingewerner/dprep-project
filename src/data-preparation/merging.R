@@ -22,8 +22,8 @@ blm_merged$user_created_date <- as.Date(blm_merged$user_created_date)
 
 
 # add column with year of tweets
-blm_merged$year <- as.Date(format(blm_merged$tweet_date, format = "%Y-%m-%d"), "%Y")
+blm_merged$year <- format(blm_merged$tweet_date, format = "%Y")
 
 ## --------------- end cleaning: write over in csv file -------------------## 
 
-write.csv(blm_merged, '../../gen/data-preparation/merging.csv')
+write.csv(blm_merged, '../../gen/data-preparation/merging.csv')s
