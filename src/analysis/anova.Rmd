@@ -76,15 +76,6 @@ blm2021 <- gsub("\\$","", blm2021)
 
 *Sentiment analysis*
 
-```{r}
-# create a list of tokens
-#https://www.kaggle.com/rtatman/tokenization-tutorial
-
-tokens_2020<-data.frame(text= blm2020) %>% unnest_tokens(word, text)
-tokens_2020
-tokens_2021<-data.frame(text=blm2021) %>% unnest_tokens(word, text)
-tokens_2021
-```
 
 Now that we have a list of tokens, we need to compare them against a list of words with either positive or negative sentiment.
 
@@ -110,7 +101,6 @@ tokens_2020 %>%
 ```
 ```{r}
 #do the same for 2021
-
 tokens_2021 %>%
   inner_join(get_sentiments("bing")) %>% # pull out only sentiment words
   dplyr::count(sentiment) %>% # count the # of positive & negative words
@@ -137,7 +127,7 @@ blm_merged$sentiment<-get_sentiment(blm_merged$text)
 
 *ANOVA test*
 
-Previous literature indicates that sentiment analysis can explain various socio-political events in which electoral study is a dominant domain (Khatua et al. 2020) *https://doi.org/10.1016/j.asoc.2020.106743. In a relevant study Murthy et al. 2015 it is suggest that social media content differs when it is produced on mobile versus web platforms. According to the authors, tweets from smarthphones expersses the immediate thoughts, feelings and surroundings of the user, whereas web-based tweets encourage more carefull reflections of users opinion leading to less sentiment-laden tweets.  
+Previous literature indicates that sentiment analysis can explain various socio-political events in which electoral study is a dominant domain (Khatua et al. 2020) *https://doi.org/10.1016/j.asoc.2020.106743. In a relevant study Murthy et al. 2015 it is suggest that social media content differs when it is produced on mobile versus web platforms. According to the authors, tweets from smarthphones expresses the immediate thoughts, feelings and surroundings of the user, whereas web-based tweets encourage more carefull reflections of users opinion leading to less sentiment-laden tweets.  
 In the current study we will examine how the device from which a tweet is being posted (source_of_tweet) might influence the sentiment of that tweet. To do that we will perform a one-way ANOVA to determine whether there are any statistically significant differences between the different devices users can tweet. https://doi-org.tilburguniversity.idm.oclc.org/10.1111/jcom.12176
 The Dependent Variable in our analysis will be the sentiment and the Independent Variable the source.
 
@@ -151,13 +141,11 @@ https://www.scribbr.com/statistics/anova-in-r/
 ```{r}
 #2020
 one.way_2020 <- aov(sentiment ~ source_tweet , data = blm2020)
-
 summary(one.way_2020)
 
 #2021
 
 one.way_2021 <- aov(sentiment ~ source_tweet, data = blm2021)
-
 summary(one.way_2021)
 ```
 
@@ -180,7 +168,7 @@ Likewise, performing the same test for the 2021 tweets we get an F-value 3.775 a
 ANOVAlikes <- aov(like ~ user_amount_followers, data = blm_merged)
 summary(ANOVAlikes)
 ```
-The result is highly significant with a cooperatively large F-value and a p value almost close to 0. The above results indicate that the is statistical significance between the likes a user has on his/her tweets with the amount of followers he/she has.
+The result is highly significant with a cooperatively large F-value and a p value close to 0. The above results indicate that the is statistical significance between the likes a user has on his/her tweets with the amount of followers he/she has.
 
 ```{r}
 # See whether there are more retweets to a tweet when a user has more followers
@@ -237,10 +225,10 @@ Similarly, we are going to perform an ANOVA within each year to see if the negat
 
 #2020
 
-ANOVAsentiment_negative_2020 <- aov(negative ~ date, data = blm2020)
+ANOVAsentiment_negative_2020 <- aov(negative ~ tweet_date, data = blm2020)
 summary(ANOVAsentiment_negative_2020)
 
-ANOVAsentiment_positive_2020 <- aov(positive ~ date, data = blm2020)
+ANOVAsentiment_positive_2020 <- aov(positive ~ tweet_date, data = blm2020)
 summary(ANOVAsentiment_positive_2020)
 
 
@@ -251,10 +239,10 @@ Here, we see that when it comes to the dates within 2020 date is not significatl
 ```{r}
 #2021
 
-ANOVAsentiment_positve_2021 <- aov(positive ~ date, data = blm2021)
+ANOVAsentiment_positve_2021 <- aov(positive ~ tweet_date, data = blm2021)
 summary(ANOVAsentiment_positve_2021)
 
-ANOVAsentiment_negative_2021 <- aov(negative ~ date, data = blm2021)
+ANOVAsentiment_negative_2021 <- aov(negative ~ tweet_date, data = blm2021)
 summary(ANOVAsentiment_negative_2021)
 ```
 On the contrary, during 2021, which is the year of the Dutch elections we see that the positive and negative tweets are depndent on date with equal p values of 0.0038 
