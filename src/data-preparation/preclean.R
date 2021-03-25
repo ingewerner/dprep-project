@@ -44,9 +44,6 @@ for (i in seq(along=data_blm)) {
     
     # Remove duplicates with the distinct function
     blmdata %>% distinct(blmdata$tweet_id)
-    
-    ## locale-specific version of the date
-    format(Sys.Date(), "%a %b %d")
            
     # The data is a character and needs to be converted into a date variable
     blmdata$tweet_date <- sapply(strsplit(as.character(blmdata$datetime), " "), "[", 1)
@@ -188,5 +185,3 @@ for (i in seq(along=data_blm)) {
 }
 
 rm(blmdata)
-prepared_data[[1]]
-prepared_data[[2]]

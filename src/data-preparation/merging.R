@@ -16,12 +16,13 @@ blm_merged$quote_count <- as.integer(blm_merged$quote_count)
 blm_merged <- subset(blm_merged, select = -row.names)
 
 # Set date into as.Date since we csv does not recognize as.Date
+format(Sys.Date(), "%Y-%m-%d")
 blm_merged$tweet_date <- as.Date(blm_merged$tweet_date)
 blm_merged$user_created_date <- as.Date(blm_merged$user_created_date)
 
 
 # add column with year of tweets
-blm_merged$year <- format(blm_merged$tweet_date, format = "%Y")
+blm_merged$year <- format(blm_merged$tweet_date, format = "%Y-%m-%d")
 
 ## --------------- end cleaning: write over in csv file -------------------## 
 
