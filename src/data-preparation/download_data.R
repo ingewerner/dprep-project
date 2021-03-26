@@ -8,13 +8,22 @@ files = list(
   
 library(data.table)
 
-for (i in files) {
+data_blm <- lapply(files, function(i) {
   print(i)
   #i['url']
   #i['target']
   
   blm_data <- read.csv(i['url'], sep = '\t', na.string = c(" ", "NA"))
-  write.csv(blm_data, paste0('../../datasets/', i['target']), quote = TRUE, fileEncoding = "UTF-8")
-}
+  return(blm_data)
+  #write.csv(blm_data, paste0('../../datasets/', i['target']), quote = TRUE, fileEncoding = "UTF-8")
+  #return(nrow(blm_data))
+})
+
+save(data_blm, file = '../../datasets/datasets.RData')
+
+
+# asserts
+#stopifnot(all(unlist(rows)==c(30,5404)))
+
 
 

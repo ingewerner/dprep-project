@@ -11,18 +11,12 @@ library(dplyr)
 library(tidyr)
 library(textclean)
 
-# Download the data 
-filenames = c('../../datasets/BLM2020_dataset.csv',
-              '../../datasets/BLM2021_dataset.csv')
+# 
+load('../../datasets/datasets.RData')
 
 
-data_blm = lapply(filenames,
-                  function(fn) {
-                      read.csv(
-                          fn, sep = ',' , na.string = c(" ", "NA"),
-                          encoding = 'UTF-8'
-                      )
-                  })
+stopifnot(all(unlist(lapply(data_blm, nrow))==c(30,5404)))
+
 
 # Loop through all of the data
 dir.create('../../gen/data-preparation/temp', recursive= TRUE)
@@ -32,8 +26,10 @@ prepared_data <- list()
 for (i in seq(along=data_blm)) {
     print(i)
     blmdata = data_blm[[i]]
-    fn = filenames[i]
-    extracted_filename = rev(strsplit(fn, '/')[[1]])[1]
+    
+    if (i==1) extracted_filename = 'BLM2020_dataset.csv'
+    if (i==2) extracted_filename = 'BLM2021_dataset.csv'
+    
     
     # Set the NA's right
     blmdata$retweeted_tweet[is.na(blmdata$retweeted_tweet)] <- 0
@@ -60,7 +56,7 @@ for (i in seq(along=data_blm)) {
     # remove extra variables
     blmdata <- subset(blmdata, select = -datetime)
     blmdata <- subset(blmdata, select = -user_created)
-    blmdata <- subset(blmdata, select = -X)
+    #blmdata <- subset(blmdata, select = -X)
     
     # Make sure that the other variables are measured correctly
     blmdata$retweeted_tweet <- as.integer(blmdata$retweeted_tweet)
@@ -87,7 +83,6 @@ for (i in seq(along=data_blm)) {
         return(ret)
     }
     
-    #cleaning_fkt(c('hannes','lala\r\n', 'test123¦1243123'))
     
     blmdata$text <- cleaning_fkt(blmdata$text)
     
@@ -118,4 +113,5 @@ for (i in seq(along=data_blm)) {
     
 }
 
-rm(blmdata)
+stopifnot(all(unlist(lapply(prepared_data, nrow))==c(30,5404)))
+
