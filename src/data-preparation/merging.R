@@ -25,4 +25,8 @@ blm_merged$year <- format(blm_merged$tweet_date, format = "%Y")
 
 ## --------------- end cleaning: write over in csv file -------------------## 
 
+print(paste0('The final output file has...', nrow(blm_merged), 'rows!'))
+
+stopifnot(nrow(blm_merged) > 5000)
+
 write.csv(blm_merged, '../../gen/data-preparation/merging.csv')
