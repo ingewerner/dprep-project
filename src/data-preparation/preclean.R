@@ -65,102 +65,36 @@ for (i in seq(along=data_blm)) {
     # Make sure that the other variables are measured correctly
     blmdata$retweeted_tweet <- as.integer(blmdata$retweeted_tweet)
 
+    
+    
     # remove weird characters (rendered) content tweet and user description 
-    blmdata$text <- gsub(blmdata$text, pattern = "\r\n",replacement= "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "©", replacement= "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "¦", replacement= "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "Ã", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "f", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "ð", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "Y", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "~", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "¯", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "ª", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "¸", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "&gt;", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "â", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "¤;", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "ï", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "T", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "«", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "¨", replacement = "", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "'ª", replacement = "&", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "¢", replacement = "&", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "o;", replacement = "&", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "®", replacement = "&", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "â", replacement = "&", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "Y", replacement = "&", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "~", replacement = "&", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "o", replacement = "&", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "½", replacement = "&", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "T", replacement = "&", fixed = T)
-    blmdata$text <- gsub(blmdata$text, pattern = "^", replacement = "&", fixed = T)
+    replace_characters <- scan('weird_characters.txt',what='character')
+    replace_characters <- gsub('\\\\', '\\',replace_characters)
+    replace_characters <- gsub('^rn$', '\r\n',replace_characters)
     
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "\r\n", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "©", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "¦", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "Ã", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "f", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "ð", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "Y", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "~", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "¯", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "ª", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "¸", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "&gt;", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "â", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "¤", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "ï", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "T", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "«", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "¨", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "&amp;", replacement = "&", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "¢", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "'ª", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "o", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "®", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "â", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "Y", replacement = "&", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "~", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "o", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "½", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "T", replacement = "", fixed = T)
-    blmdata$rendered_content <- gsub(blmdata$rendered_content, pattern = "^", replacement = "", fixed = T)
     
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "\r\n", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "©", replacement= "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "¦", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "Ã", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "f", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "ð", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "Y", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "~", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "¯", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "ª", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "¸", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "&gt;", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "â", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "¤", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "ï", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "T", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "«", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "¨", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "&amp;", replacement = "&", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "¢", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "'ª", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "o", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "®", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "â", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "Y", replacement = "&", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "~", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "o", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "½", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "T", replacement = "", fixed = T)
-    blmdata$user_description <- gsub(blmdata$user_description, pattern = "^", replacement = "", fixed = T)
-       
+#' Strip your text variables from uselass characters
+#'
+#' @param x Input character vector
+#'
+#' @return
+#' @export
+#'
+#' @examples
+    cleaning_fkt <- function(x) {
+        ret=x
+        for (char in replace_characters) ret=gsub(ret, pattern = char, replacement= "", fixed = T)
+        return(ret)
+    }
+    
+    #cleaning_fkt(c('hannes','lala\r\n', 'test123¦1243123'))
+    
+    blmdata$text <- cleaning_fkt(blmdata$text)
+    
+    blmdata$rendered_content <- cleaning_fkt(blmdata$rendered_content)
+    
+    blmdata$user_description <- cleaning_fkt(blmdata$user_description)
+    
     #replace data that is retreived the wrong way
     replace_contraction(blmdata$rendered_content)
     replace_emoticon(blmdata$redered_content)
