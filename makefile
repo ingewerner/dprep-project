@@ -1,4 +1,6 @@
-all: analysis data-preparation
+all: data-preparation analysis
+data-preparation: gen/data-preparation
+analysis: gen/analysis
 
 data-preparation:
 	$(MAKE) -C src/data-preparation

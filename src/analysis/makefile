@@ -1,7 +1,7 @@
-#Analysis 
+#Analysis
 
 all: exploration anova
-exploration: ../../gen/analysis/output/exploration.html 
+exploration: ../../gen/analysis/output/exploration.html
 anova: ../../src/analysis/anova.html
 
 
@@ -12,5 +12,3 @@ anova: ../../src/analysis/anova.html
 
 ../../src/analysis/anova.html: anova.Rmd ../../gen/data-preparation/temp/BLM2020_dataset.csv ../../gen/data-preparation/temp/BLM2021_dataset.csv
 	R -e "rmarkdown::render('anova.Rmd', output_file = '../../gen/analysis/output/anova.html')"
-
-

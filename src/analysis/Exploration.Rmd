@@ -31,10 +31,17 @@ library(tm)
 library(SnowballC)
 library(wordcloud)
 library(RColorBrewer)
+library(rmarkdown)
+library(syuzhet)
 ```
 *Loading the data*
 
 ```{r}
+dir.create('../../gen/analysis', recursive= TRUE)
+
+dir.create('../../gen/analysis/output', recursive= TRUE)
+
+
 blm_merged<-read.csv('../../gen/data-preparation/merging.csv', sep = ',', na.strings=c("", "NA"))
 
 ```

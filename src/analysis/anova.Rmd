@@ -13,18 +13,12 @@ library(ggplot2)
 library(forestmangr)
 library(syuzhet)
 library(tidyverse)
-library(readxl) # read excel
-library(tibble) # tobble dataframe
-library(dplyr) # piping
-library(stringr) # character manipulation
+library(readxl)
+library(tibble) 
+library(dplyr) 
 library(tidytext)
-library(tokenizers)
 library(stopwords)
-library(lobstr)
-library(glue)
-library(lubridate)
-library(httr)
-library(readr)
+library(lobstr) 
 ```
 *Loading the data*
 
@@ -32,6 +26,8 @@ library(readr)
 blm2020<-read.csv('../../gen/data-preparation/temp/BLM2020_dataset.csv', sep = ' ', na.strings=c("", "NA"))
 
 blm2021<-read.csv('../../gen/data-preparation/temp/BLM2021_dataset.csv', sep = '', na.strings=c("", "NA"))
+
+blm_merged<-read.csv('../../gen/data-preparation/merging.csv', sep = ',', na.strings=c("", "NA"))
 ```
 
 
