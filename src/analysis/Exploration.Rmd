@@ -14,23 +14,13 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 library(rtweet) 
 library(tidyr)
 library(ggplot.multistats)
-library(ggplot2)
-library(forestmangr)
-#library(syuzhet)
+library(syuzhet)
 library(tidyverse)
-#library(readxl) # read excel
-#library(tibble) # tobble dataframe
-#library(stringr) # character manipulation
 library(tidytext)
-library(tokenizers)
 library(stopwords)
-#library(lobstr)
-#library(glue)
 library(dplyr) # piping
 library(tm)
-library(SnowballC)
 library(wordcloud)
-library(RColorBrewer)
 library(rmarkdown)
 library(syuzhet)
 ```
