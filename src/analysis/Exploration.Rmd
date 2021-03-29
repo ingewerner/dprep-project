@@ -23,6 +23,7 @@ library(tm)
 library(wordcloud)
 library(rmarkdown)
 library(syuzhet)
+library(forestmangr)
 ```
 *Loading the data*
 
