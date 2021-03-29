@@ -60,6 +60,7 @@ install.packages("tm")
 install.packages("wordcloud")
 install.packages("syuzet")
 install.packages("lobstr")
+install.packages("forestmangr")
 ```
 If the package are installed, you can make sure they are opened to see it with the following code:
 ```
@@ -78,6 +79,7 @@ library("tm")
 library("wordcloud")
 library("syuzet")
 library("lobstr")
+library("forestmangr")
 ```
 ## More resources 
 In order to understand the whole project and see how it was set up, please visit [https://tilburgsciencehub.com/]. This is a very convenient website to get all you need to know to run this project and get to know the programs used. 
