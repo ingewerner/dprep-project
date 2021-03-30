@@ -62,7 +62,7 @@ install.packages("syuzet")
 install.packages("lobstr")
 install.packages("forestmangr")
 ```
-If the packages are installed, you can make sure they are opened to see it with the following code:
+If the packages are installed, you can make sure they are loaded using following code:
 ```
 library("rtweet")
 library("dplyr")
