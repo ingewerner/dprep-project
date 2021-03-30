@@ -6,15 +6,15 @@
 
 ## Motivation
 
-Black Lives Matter is a topic everyone knows about these days. It comes with a lot of sentiment and emotions. Especially regarding politics, the Black Lives Matter movement is one that political parties should have an opinion about. With more knowledge about this topic, the national debate and the actions of political parties in the Netherlands regarding the black lives matter issue, politicians can make strategies in order to strategically position their party as preparation for the Dutch elections. In order to provide an up-to-date research about this topic in combination with the sentiment of the Dutch population, we provided this data and pipeline structure. 
+Black Lives Matter is a topic everyone knows about these days. It comes with a lot of sentiment and emotions. Especially regarding politics, the Black Lives Matter movement is one that political parties should have an opinion about. With more knowledge about this topic, the national debate and the actions of political parties in the Netherlands regarding the black lives matter issue, politicians can make strategies in order to strategically position their party as preparation for the Dutch elections. In order to provide an up-to-date research about this topic in combination with the sentiment of the Dutch population regarding the isssue, we provided data and a pipeline structure. 
 
-To research this topic, data of the first months of 2020 and 2021, before and during the Dutch Elections of 2021, regarding the #BlackLivesMatter and #BLM usage is collected. This research is composed in 2021. 
+To research this topic, Dutch tweets of the first three months of 2020 and 2021, before and during the Dutch Elections of 2021, regarding the #BlackLivesMatter and #BLM usage is collected. This research is composed in 2021. 
 
 ## Methods and results 
 
 This was our research objective and the data collection as well as the data preparation and analysis are done with this objective in mind. Other research questions which need data of 2020 and 2021 to compare the Black Lives Matter sentiment can also be researched using this dataset. Besides that, we would encourage you to use this data and the process for other purposes and other objectives. 
 
-In order to collect the data, we used python to scrape the data. More specifically, we used Jupyter notebook to write the code. We have conducted datacollection by scraping tweets from the Twitter website containing the hashtag or text; BLM, Black Lives Matter, #BLM and #BlackLivesMatter. We did this for two time periods, the first months of 2020 and the first months of 2021. In the first months of 2021, campaigns of  political parties were running to prepare for the elections on 17-03-2021. We did this with the python package sntwitter.TwitterSearchScraper. 
+In order to collect the data, we used python to scrape data from Twitter. More specifically, we used Jupyter notebook to write the code. We have conducted datacollection by scraping tweets from the Twitter website containing the hashtag; #BLM and #BlackLivesMatter. We did this for two time periods, the first three months of 2020 and the first three months of 2021. In the first months of 2021, campaigns of  political parties were running to prepare for the elections on 17-03-2021. We used the python package sntwitter.TwitterSearchScraper to scrape the tweets (the package made it possible to retrieve historical data of Twitter). 
 
 **summarize the results**
 
@@ -41,7 +41,7 @@ The repository your are currently in is build with different pipelines. We made 
 ## Running instructions
 The data is collected in python. The python code can be found in this repository. In order to run this, you need to be able to run the python file with any program you like. 
 
-In order to run the whole project, the makefile can be found in the src folder. Have a look at before you run it in order to understand the structure of the pipeline! With this, the data is downloaded, precleaned, merged and analysis are made after that. Those are the steps of the pipeline. The makefile already knows the order. Run the makefile in your gitbash program by typing the command *make*. 
+In order to run the whole project, the makefile can be found in the src folder. Have a look at it before you run it in order to understand the structure of the pipeline! With this, the data is downloaded, precleaned, merged and analysis are made after that. Those are the steps of the pipeline. The makefile already knows the order. Run the makefile in your gitbash program by typing the command *make*. 
 
 The data is prepared and analysed in R. When you run the makefile, please make sure to download the following R packages on the version of R gitbash is using. You can easily copy the codes below and paste this in your local R used by gitbash. The following packages should be installed: 
 ```
@@ -49,7 +49,18 @@ install.packages("rtweet")
 install.packages("dplyr")
 install.packages("textclean")
 install.packages("tidyr")
-install.packages"(data.table")
+install.packages("data.table")
+install.packages("rmarkdown")
+install.packages("ggplot.multistats")
+install.packages("forestmangr")
+install.packages("tidyverse")
+install.packages("tidytext")
+install.packages("stopwords")
+install.packages("tm")
+install.packages("wordcloud")
+install.packages("syuzet")
+install.packages("lobstr")
+install.packages("forestmangr")
 ```
 If the package are installed, you can make sure they are opened to see it with the following code:
 ```
@@ -58,6 +69,17 @@ library("dplyr")
 library("textclean")
 library("tidyr")
 library("data.table")
+library("rmarkdown")
+library("ggplot.multistats")
+library("forestmangr")
+library("tidyverse")
+library("tidytext")
+library("stopwords")
+library("tm")
+library("wordcloud")
+library("syuzet")
+library("lobstr")
+library("forestmangr")
 ```
 ## More resources 
 In order to understand the whole project and see how it was set up, please visit [https://tilburgsciencehub.com/]. This is a very convenient website to get all you need to know to run this project and get to know the programs used. 
