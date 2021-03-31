@@ -29,9 +29,13 @@ The repository your are currently in is build with different pipelines. We made 
 ```bash
 
 ├── README.md
+├── makefile
+├── .gitignore.txt
 ├── src
 │   ├── analysis
-│   ├── data-preparation
+│   ├── collect
+│   ├── data-prepartion
+│
 └── datasets
 └── gen
     ├── analysis
@@ -62,25 +66,7 @@ install.packages("syuzet")
 install.packages("lobstr")
 install.packages("forestmangr")
 ```
-If the package are installed, you can make sure they are opened to see it with the following code:
-```
-library("rtweet")
-library("dplyr")
-library("textclean")
-library("tidyr")
-library("data.table")
-library("rmarkdown")
-library("ggplot.multistats")
-library("forestmangr")
-library("tidyverse")
-library("tidytext")
-library("stopwords")
-library("tm")
-library("wordcloud")
-library("syuzet")
-library("lobstr")
-library("forestmangr")
-```
+
 ## More resources 
 In order to understand the whole project and see how it was set up, please visit [https://tilburgsciencehub.com/]. This is a very convenient website to get all you need to know to run this project and get to know the programs used. 
 
