@@ -7,7 +7,7 @@ data-preparation:
 
 analysis: data-preparation
 	make -C gen/analysis
-	make -C rc/analysis
+	make -C src/analysis
 
 wipe:
 	make wipe -C src/data-preparation
