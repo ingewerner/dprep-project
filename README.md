@@ -69,31 +69,6 @@ install.packages("lobstr")
 install.packages("forestmangr")
 ```
 
-Besides that, we wanted to state that this project is runned by the project owners on Windows computers. In case you run this project on a Mac computer, the general makefile in the main repository needs to be adjusted. 
-
-*The following part should be changed:*
-data-preparation:
-	make -C src/data-preparation
-
-analysis: data-preparation
-	make -C src/analysis
-
-wipe:
-	make wipe -C src/data-preparation
-	make wipe -C src/analysis
-
-*Into the following part:*
-data-preparation:
-	$(MAKE) -C src/data-preparation
-
-analysis: data-preparation
-	$(MAKE) -C src/analysis
-
-wipe:
-	$(MAKE) wipe -C src/data-preparation
-	$(MAKE) wipe -C src/analysis
-
-
 ## More resources 
 In order to understand the whole project and see how it was set up, please visit [https://tilburgsciencehub.com/]. This is a very convenient website to get all you need to know to run this project and get to know the programs used. 
 
