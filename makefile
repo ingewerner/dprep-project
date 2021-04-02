@@ -11,8 +11,3 @@ analysis: data-preparation
 wipe:
 	make wipe -C src/data-preparation
 	make wipe -C src/analysis
-
-.PHONY: clean
-
-clean:
-	RM -f -r "datasets"
