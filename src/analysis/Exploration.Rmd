@@ -1,0 +1,324 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+*Installing required packages*
+
+```{r}
+
+library(rtweet) 
+library(tidyr)
+library(ggplot.multistats)
+library(syuzhet)
+library(tidyverse)
+library(tidytext)
+library(stopwords)
+library(dplyr) # piping
+library(tm)
+library(wordcloud)
+library(rmarkdown)
+library(syuzhet)
+library(forestmangr)
+```
+*Loading the data*
+
+```{r}
+dir.create('../../gen/analysis', recursive= TRUE)
+
+dir.create('../../gen/analysis/output', recursive= TRUE)
+
+
+blm_merged<-read.csv('../../gen/data-preparation/merging.csv', sep = ',', na.strings=c("", "NA"))
+
+```
+
+* set everything right * 
+```{r}
+
+# remove first column 
+
+blm_merged <- subset(blm_merged, select = -X)
+
+# set user_created_date as date
+blm_merged$user_created_date <- as.Date(blm_merged$user_created_date, format = c("%Y-%m-%d"))
+
+# Set date into as.Date
+
+blm_merged$tweet_date <- as.Date(blm_merged$tweet_date)
+
+# set integers 
+blm_merged$user_amount_followers <- as.integer(blm_merged$user_amount_followers, na.strings = "NA")
+blm_merged$user_amount_friends <- as.integer(blm_merged$user_amount_friends, na.strings = "NA")
+blm_merged$user_amount_status <- as.integer(blm_merged$user_amount_status, na.strings = "NA")
+blm_merged$user_listed_count <- as.integer(blm_merged$user_listed_count, na.strings = "NA")
+blm_merged$user_media_count <- as.integer(blm_merged$user_media_count, na.strings = "NA")
+
+
+```
+
+*Making dataframe with amount of retweets, likes and replies*
+To start some graphics we first need to make a dataframe inluding the amount of retweets, likes and replies. 
+
+```{r}
+#Retweet
+
+RLR <- function(year){
+    for (i in year){ 
+      retweet <- (sum(blm_merged[blm_merged$year == year,]$retweet, na.rm = T))
+      like <- (sum(blm_merged[blm_merged$year == year,]$like, na.rm = T))
+      reply <- (sum(blm_merged[blm_merged$year == year,]$reply, na.rm = T))
+      quoted <- (sum(blm_merged[blm_merged$year == year,]$quote_count, na.rm = T))
+    } 
+  RLRdata <- data.frame(category=c("Retweet", "Like", "Reply", "Quoted"), count = c(retweet, like, reply, quoted))
+  return(RLRdata)
+}
+
+RLRdata2020 <- RLR(2020)
+RLRdata2020
+RLRdata2021 <- RLR(2021)
+
+```
+
+
+
+
+*Visualizing the data 2020*
+
+By visualizing what kind of tweets are relatively most often used, we can directly see that the tweets of 2020 are most often liked compared to the replies, retweets and quoted tweets. A like represents that you like the post but do not repost it as retweets or quoted tweets do. 
+
+```{r}
+#Adding columns
+
+RLRdata2020$fraction = RLRdata2020$count / sum(RLRdata2020$count)
+RLRdata2020$percentage = RLRdata2020$count / sum(RLRdata2020$count) * 100
+RLRdata2020$ymax = cumsum(RLRdata2020$fraction)
+RLRdata2020$ymin = c(0, head(RLRdata2020$ymax, n=-1))
+
+#Rounding up
+
+RLRdata2020 <- round_df(RLRdata2020, 2)
+
+# Specify what the legend should say
+Type_of_Tweet <- paste(RLRdata2020$category, RLRdata2020$percentage, "%")
+
+ggplot(RLRdata2020, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Type_of_Tweet)) +
+  geom_rect() +
+  coord_polar(theta="y") + 
+  xlim(c(2, 4)) +
+  theme_void() +
+  theme(legend.position = "right")
+```
+
+
+*Visualizing the data 2021*
+
+For 2021 we do the same as before and see that there is a larger amount of retweets in proportion to the types of tweets compared to 2020. Apperantly users are argreeing more with tweets using the blm statements as they want to post the same. We also see that there is a larger amount of quoted tweets in proportion of all types of tweets (compared to 2020), this confirms the previous statement: people are agreeing more and want to speak about it. 
+
+```{r}
+#Adding columns
+
+RLRdata2021$fraction = RLRdata2021$count / sum(RLRdata2021$count)
+RLRdata2021$percentage = RLRdata2021$count / sum(RLRdata2021$count) * 100
+RLRdata2021$ymax = cumsum(RLRdata2021$fraction)
+RLRdata2021$ymin = c(0, head(RLRdata2021$ymax, n=-1))
+
+#Rounding up
+
+RLRdata2021 <- round_df(RLRdata2021, 2)
+
+# Specify what the legend should say
+Type_of_Tweet <- paste(RLRdata2021$category, RLRdata2021$percentage, "%")
+
+ggplot(RLRdata2021, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=Type_of_Tweet)) +
+  geom_rect() +
+  coord_polar(theta="y") + 
+  xlim(c(2, 4)) +
+  theme_void() +
+  theme(legend.position = "right")
+```
+
+
+
+
+*Most frequent words in the tweets*
+
+Lets see which words are more frequently used in the posts of 2020.
+
+First, we want to remove dutch stop words like "so" and "at" for counting the most frequent words. We then make a cloud of words. For 2020, we see the words 'all lives matter', 'blm', 'zwarte' and 'Amsterdam' are most used. These words are all related to the black lives matter issue as we expected. It is noticeablt that Amsterdam is used as the government of the Netherlands is placed in the Hague you might expect that there would be more tweets including the Hague. However, Amsterdam also makes sense since it is the capital of the Netherlands. When we check the wordcloud of 2021 the most frequent used words are 'blm', 'ver', 'antia', 'blacklivesmatter'. The word 'ver' means 'far' in dutch. Since that does not make much sense we will leave that for what it is. The other most frequent used words are, however, related to the black lives matter issue. Antia can be related with the Antifa, twitter or one of our codes might have deleted the F. Antifa is the anti-facistic movement in the Netherlands and Belgium. It is against the extreme right-wing parties, nazism, facism and neofacism. It is interesting that this is used so much as it also includes the politics (right-wing parties). 
+
+```{r}
+
+clouds <- function(year){
+  docs <- Corpus(VectorSource(blm_merged[blm_merged$year == year,]$text))
+  # Convert the text to lower case
+  docs <- tm_map(docs, content_transformer(tolower))
+  # Remove numbers
+  docs <- tm_map(docs, removeNumbers)
+  # Remove english common stopwords
+  docs <- tm_map(docs, removeWords, stopwords("dutch"))
+  # Remove your own stop word
+  # specify your stopwords as a character vector
+  docs <- tm_map(docs, removeWords, c("blabla1", "blabla2")) 
+  # Remove punctuations
+  docs <- tm_map(docs, removePunctuation)
+  # Eliminate extra white spaces
+  docs <- tm_map(docs, stripWhitespace)
+  # Text stemming
+  docs <- tm_map(docs, stemDocument)
+
+  dtm <- TermDocumentMatrix(docs)
+  m <- as.matrix(dtm)
+  v <- sort(rowSums(m),decreasing=TRUE)
+  d <- data.frame(word = names(v),freq=v)
+
+
+  set.seed(1234)
+  wordcloud(words = d$word, freq = d$freq, min.freq = 1,
+          max.words=200, random.order=FALSE, rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"))
+}
+
+clouds(2020)
+clouds(2021)
+```
+
+
+
+
+*Sentiment analysis for positive or negative tweets 2020*
+
+To see the nature of the tweets we can make a sentiment analysis. We do that for both years and see that in 2020 the negativity and positivity scores the highest. In 2021 we however see that the difference in sentiment scores is slightly bigger: it is more negative. We furthermore also see that in 2021 tweets score higher on disgust. That's a noticable difference! Apperantly people want to raise their voice in a more negative way in 2021.
+
+
+
+```{r}
+
+tweets <- function(year){
+  tweets <- blm_merged[blm_merged$year == year,] %>%
+    select(text) %>%
+    unnest_tokens(word, text)
+  tweets <- tweets %>%
+    anti_join(get_stopwords(language = "nl", source = "snowball"))
+}
+
+sentiment <- function(year){ 
+  tweets_sentiment <- iconv(tweets(year), from="UTF-8", to="ASCII", sub="")# Converting tweets to ASCII to        trackle strange characters
+  
+  # removing retweets, in case needed 
+  tweets_sentiment <-gsub("(RT|via)((?:\\b\\w*@\\w+)+)","",tweets_sentiment)
+  
+  # removing mentions, in case needed
+  tweets_sentiment <-gsub("@\\w+","",tweets_sentiment)
+  ew_sentiment<-get_nrc_sentiment((tweets_sentiment))
+  sentimentscores<-data.frame(colSums(ew_sentiment[,]))
+  names(sentimentscores) <- "Score"
+  sentimentscores <- cbind("sentiment"=rownames(sentimentscores),sentimentscores)
+  rownames(sentimentscores) <- NULL
+  
+  # make plot
+  ggplot(data=sentimentscores,aes(x=sentiment,y=Score))+
+    geom_bar(aes(fill=sentiment),stat = "identity")+
+    theme(legend.position="none")+
+    xlab("Sentiments")+ylab("Scores")+
+    ggtitle("Total sentiment based on scores", year)+
+    theme_minimal()
+  
+}
+sentiment(2020)
+sentiment(2021)
+
+```
+
+
+*Visualizing the variables in the dataset 2020*
+
+We are now visualizing the likes by date for both years, as likes were most used compared to retweets and replies. We see that the most likes were in march of 2020. Additionally in 2021 that is the case for january. We, however, also see a large number of likes during february and march in 2021. We expected to see that approaching the elections of the Netherlands. 
+
+```{r}
+like_date <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = like, y = tweet_date))
+}
+like_date(2020)
+like_date(2021)
+```
+
+We also would like to visualize the likes against the amount of followers for both years. It could occur that the amount of likes depends on the amount of followers. We do not directly see a relationship. For example, in 2021 most users have below 50,000 followers and around 500 likes. There are some outliers but for both variables. We should make an ANOVA analysis to analyze it further.   
+
+```{r}
+
+like_followers <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = like, y = user_amount_followers))
+}
+like_followers(2020)
+like_followers(2021)
+
+```
+
+
+
+We now want to visualize the retweets by date for both years, as retweets were increasing by the years. When we check the plots, we see that as well. We see that a tweet is retweeted the most for 2020 in march, and for 2021 in january. We however expected that approaching the elections in the Netherlands (march 2021), tweets using the blm statements were more retweeted in March then in January to get the attention. 
+
+
+```{r}
+retweet_date <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = retweet, y = tweet_date), color = "blue")
+}
+
+retweet_date(2020)
+retweet_date(2021)
+
+```
+
+
+Again, we also want to know what the relationship between the amount of retweets and the user amount of followers would be for both years. We do not see directly an relationship. In the ANOVA part we will discuss the ANOVA results for this relationship. 
+```{r}
+retweet_followers <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = like, y = user_amount_followers))
+}
+retweet_followers(2020)
+retweet_followers(2021)
+```
+
+
+
+*Graphing users amount of followers and user amount friends*
+
+We also want to check the relationship between the amount of followers and the amount of friends. There might be an relationship between the amount a user is following and the amount of followers of the user. We see that in general (for both years) users are following more other users than they have as followers.
+
+```{r}
+followers_friends <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = user_amount_followers, 
+                             y = user_amount_friends, color = "blue"))
+}
+
+followers_friends(2020)
+followers_friends(2021)
+```
+
+*Graphing users amount followers and source of tweet*
+
+We want to check the relationship between the source of the tweet and the amount of user followers. As you might expect that when an user has a large number of followers, it needs to post more and an app might be more convient for that than using the webbrowser. For both years we see that the Twitter Web App and Twitter for iPhone are most used. For 2020 we see that users with the most amount of followers often use Twitter for Iphone. For 2021 we see however that TweetDeck is used for the user with the most amount of followers. We also see in 2021 that twitter for Android has been more used but that is probably due to the amount of tweets in 2021 compared to 2020. 
+
+```{r}
+time_source_tweet <- function(year){ 
+  ggplot(data = blm_merged[blm_merged$year == year,]) + 
+    geom_point(mapping = aes(x = user_amount_followers, y = source_tweet), color = "blue")
+}
+
+time_source_tweet(2020)
+time_source_tweet(2021)
+```
+
+
+
+

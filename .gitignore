@@ -1,2 +1,6 @@
 **data/
+.Rhistory
 **gen/
+.html
+*.RData
+**datasets/
